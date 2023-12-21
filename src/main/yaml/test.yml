@@ -1,0 +1,43 @@
+incarnation: protelis
+
+variables:
+  width: &width
+    type: Constant
+    parameters: 50
+  height: &height
+    type: Constant
+    parameters: 50
+
+network-model:
+  type: ConnectWithinDistance
+  parameters:
+    - 0.5
+
+environment:
+  type: Continuous2DEnvironment
+
+seeds:
+  scenario: 0
+  simulation: 1
+
+_reactions:
+  move: &spawn
+    - type: Event
+      time-distribution: 1
+      actions:
+        - type: Release
+
+
+deployments:
+  type: Point
+  parameters: [0,0]
+  contents:
+    molecule: pheromone
+    concentration: 8
+  programs:
+    - *spawn
+
+layers:
+  - type: IncreaseInTime
+    parameters: [800]
+    molecule: pheromone

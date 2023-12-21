@@ -1,0 +1,42 @@
+incarnation: protelis
+
+
+environment:
+  # bi-dimensional euclidean space
+  type: Continuous2DEnvironment
+
+network-model:
+  # nodes are considered as neighbours on a per-distance basis
+  type: ConnectWithinDistance
+  parameters:
+    - 0.5
+
+# custom object name with no particular semantics
+# it is aimed at containing reactions to be referenced elsewhere
+_reactions:
+  # re-usable set of reactions making a node perform a brownian movement
+  # i.e. the node moves in a random direction of a given amount, repeatedly, once every while
+  move: &count
+    - # simple type of reaction which completely ignores any condition,
+      # and tries to run every time the aforementioned time distribution wants it to run
+      type: Event
+      # once every delta time, the node increments its internal clock by delta time
+      time-distribution: 1
+      # actions to be performed every time this
+      actions:
+        - type: Counter
+          parameters: [time] ## time is the molecule name
+
+# declarative section aimed at displacing nodes in the environment
+deployments:
+  # disposes as many nodes as possible in the 10x10 squared area centered in (0, 0), in a grid-like fashion
+  # nodes are disposed in the 10x10 grid by letting a 0.25 distance separate them over both the vertical
+  # and horizontal axes. notice that each node disposition is perturbed by a random vector uniformly drawn
+  # from the 0.2-edged square centered in (0, 0)
+  type: Grid
+  parameters: [-5, -5, 5, 5, 0.25, 0.25, 0.1, 0.1]
+  contents:
+      - molecule: time # the molecule name used in the reaction
+        concentration: 0
+  programs:
+    - *count # add the channel reaction to each node
