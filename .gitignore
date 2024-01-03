@@ -9,3 +9,4 @@ bin/
 
 # Ignore Alchemist folder specified for export
 data
+.DS_Store
