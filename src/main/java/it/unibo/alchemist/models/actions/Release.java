@@ -28,7 +28,7 @@ public class Release<P extends Position<P>> extends AbstractAction<Integer> {
     @Override
     public void execute() {
         var currentPosition = environment.getPosition(node);
-        var newPosition = currentPosition.plus(environment.makePosition(0, 1).getCoordinates());
+        var newPosition = currentPosition.plus(environment.makePosition(-1, 0).getCoordinates());
         environment.moveNodeToPosition(node, newPosition);
     }
 
