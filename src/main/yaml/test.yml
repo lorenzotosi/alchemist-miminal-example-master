@@ -11,7 +11,7 @@ variables:
 network-model:
   type: ConnectWithinDistance
   parameters:
-    - 0.5
+    - 1
 
 environment:
   type: Continuous2DEnvironment
@@ -25,19 +25,26 @@ _reactions:
     - type: Event
       time-distribution: 1
       actions:
-        - type: Release
+        #- type: MoveRight
+        #  parameters: [pheromone]
+        - type: ReadLayer
+          parameters: [1]
+
 
 
 deployments:
-  type: Point
-  parameters: [0,0]
+  type: Rectangle
+  parameters: [2, 0, 0, 1, 1]
   contents:
     molecule: pheromone
-    concentration: 8
+    concentration: 10
   programs:
     - *spawn
 
 layers:
-  - type: IncreaseInTime
-    parameters: [800]
+  #- type: PheromoneLayer
+  #  parameters: [pheromone]
+  #  molecule: pheromone
+  - type: NonConvexLayer
+    parameters: [1.0, 0, 0, 0, 5, 5, 5, 5, 0]
     molecule: pheromone
