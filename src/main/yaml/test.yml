@@ -46,5 +46,5 @@ layers:
   #  parameters: [pheromone]
   #  molecule: pheromone
   - type: NonConvexLayer
-    parameters: [1.0, 0, 0, 0, 5, 5, 5, 5, 0]
+    parameters: [0.0, 0, 0, 0, 5, 5, 5, 5, 0]
     molecule: pheromone
