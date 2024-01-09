@@ -25,10 +25,10 @@ _reactions:
     - type: Event
       time-distribution: 1
       actions:
-        #- type: MoveRight
+        #- type: MoveNode
         #  parameters: [pheromone]
         - type: ReadLayer
-          parameters: [1]
+          parameters: [3]
 
 
 
@@ -42,9 +42,9 @@ deployments:
     - *spawn
 
 layers:
-  #- type: PheromoneLayer
-  #  parameters: [pheromone]
-  #  molecule: pheromone
-  - type: NonConvexLayer
-    parameters: [0.0, 0, 0, 0, 5, 5, 5, 5, 0]
+  - type: PheromoneLayer
+    parameters: [pheromone]
     molecule: pheromone
+  #- type: NonConvexLayer
+  #  parameters: [0.0, 0, 0, 5, 5]
+  #  molecule: pheromone

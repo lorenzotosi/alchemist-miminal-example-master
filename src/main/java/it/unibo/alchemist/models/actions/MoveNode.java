@@ -4,12 +4,12 @@ import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
 
 
-public class MoveRight<P extends Position<P>> extends AbstractAction<Integer> {
+public class MoveNode<P extends Position<P>> extends AbstractAction<Integer> {
     private final Node<Integer> node; // implicit value
 
     private final Environment<Integer, P> environment; // implicit value
 
-    public MoveRight(Node<Integer> node, Environment<Integer, P> environment) {
+    public MoveNode(Node<Integer> node, Environment<Integer, P> environment) {
         super(node);
         this.node = node;
         this.environment = environment;
@@ -17,7 +17,7 @@ public class MoveRight<P extends Position<P>> extends AbstractAction<Integer> {
 
     @Override
     public Action<Integer> cloneAction(Node<Integer> node, Reaction<Integer> reaction) {
-        return new MoveRight(node,  environment);
+        return new MoveNode(node,  environment);
     }
 
     @Override
