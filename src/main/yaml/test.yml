@@ -20,6 +20,10 @@ environment:
       type: DiracComb
       parameters: [0, 0.01]
     type: Deposit
+  - time-distribution:
+      type: DiracComb
+      parameters: [ 0, 0.01 ]
+    type: Evaporate
 
 
 
@@ -41,7 +45,7 @@ _actions:
 
 deployments:
   type: Rectangle
-  parameters: [2, 0, 0, 1, 1]
+  parameters: [20, 0, 0, 1, 1]
   contents:
     molecule: pheromone
     concentration: 10
