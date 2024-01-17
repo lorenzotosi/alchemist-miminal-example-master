@@ -9,8 +9,8 @@ import java.util.Optional;
 
 public class Deposit<P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<Double, P> {
 
-    private Molecule molecule; // molecule to be used to store the counter
-    private final ListSet<Node<Double>> node; // implicit value
+    private final Molecule molecule;
+    private final ListSet<Node<Double>> node;
     public Deposit( TimeDistribution<Double> distribution, Environment<Double, P> environment) {
         super(environment, distribution);
         this.molecule = new SimpleMolecule("pheromone");
