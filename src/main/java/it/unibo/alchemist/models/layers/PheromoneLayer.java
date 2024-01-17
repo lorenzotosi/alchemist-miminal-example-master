@@ -15,7 +15,7 @@ public class PheromoneLayer<P extends Position2D<P>> implements Layer<Double, P>
     private final Environment<Double, P> environment;
 
     //p posizione, double valore
-    private final Map<P, Double> map;
+    private Map<P, Double> map;
 
     private final Molecule molecule;
 
@@ -33,17 +33,12 @@ public class PheromoneLayer<P extends Position2D<P>> implements Layer<Double, P>
     }
 
     public Map<P, Double> getMap() {
-        return Map.copyOf(map);
+        //return Map.copyOf(map);
+        return this.map;
     }
 
     @Override
     public Double getValue(P p) {
-        /*Optional<Layer<Double, P>> layer = environment.getLayer(molecule);
-        if (layer.isPresent()){
-            return layer.get().getValue(p);
-        } else  {
-            return 0.0;
-        }*/
         return map.getOrDefault(p, 0.0);
     }
 
