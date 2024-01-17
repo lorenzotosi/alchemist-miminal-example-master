@@ -17,7 +17,7 @@ public class MoveNode<P extends Position<P>> extends AbstractAction<Integer> {
 
     @Override
     public Action<Integer> cloneAction(Node<Integer> node, Reaction<Integer> reaction) {
-        return new MoveNode(node,  environment);
+        return new MoveNode<>(node,  environment);
     }
 
     @Override
