@@ -15,20 +15,27 @@ network-model:
 
 environment:
   type: Continuous2DEnvironment
+  global-programs:
+  - time-distribution:
+      type: DiracComb
+      parameters: [0, 0.01]
+    type: Deposit
+
+
 
 seeds:
   scenario: 0
   simulation: 1
 
-_reactions:
-  move: &spawn
+_actions:
+  all: &read
     - type: Event
       time-distribution: 1
       actions:
         #- type: MoveNode
         #  parameters: [pheromone]
         - type: ReadLayer
-          parameters: [3]
+          parameters:
 
 
 
@@ -39,7 +46,8 @@ deployments:
     molecule: pheromone
     concentration: 10
   programs:
-    - *spawn
+    - *read
+
 
 layers:
   - type: PheromoneLayer
@@ -48,3 +56,7 @@ layers:
   #- type: NonConvexLayer
   #  parameters: [0.0, 0, 0, 5, 5]
   #  molecule: pheromone
+
+terminate:
+  - type: AfterTime
+    parameters: 2000
