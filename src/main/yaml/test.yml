@@ -24,8 +24,13 @@ environment:
     parameters: [*moleculeName]
   - time-distribution:
       type: DiracComb
-      parameters: [ 0, 0.01 ]
+      parameters: [0, 0.01]
     type: Evaporate
+    parameters: [*moleculeName]
+  - time-distribution:
+      type: DiracComb
+      parameters: [0, 0.01]
+    type: Expand
     parameters: [*moleculeName]
 
 
