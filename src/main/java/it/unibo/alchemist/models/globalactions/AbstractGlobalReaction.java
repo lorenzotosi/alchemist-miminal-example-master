@@ -1,6 +1,7 @@
 package it.unibo.alchemist.models.globalactions;
 
 import it.unibo.alchemist.model.*;
+import it.unibo.alchemist.models.layers.PheromoneLayer;
 import org.danilopianini.util.ListSet;
 import org.danilopianini.util.ListSets;
 import org.jetbrains.annotations.NotNull;
@@ -13,10 +14,12 @@ public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position
     private final TimeDistribution<T> distribution;
     private final List<Action<T>> actions = new ArrayList<>();
     private final List<Condition<T>> conditions = new ArrayList<>();
+    private final Molecule molecule;
 
-    public AbstractGlobalReaction(Environment<T, P> environment, TimeDistribution<T> distribution) {
+    public AbstractGlobalReaction(Environment<T, P> environment, TimeDistribution<T> distribution, Molecule molecule) {
         this.environment = environment;
         this.distribution = distribution;
+        this.molecule = molecule;
     }
 
     @NotNull
@@ -68,7 +71,7 @@ public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position
 
     @Override
     public void execute() {
-        action();
+        environment.getLayer(molecule).ifPresent(phLayer -> action((PheromoneLayer<P>) phLayer));
         distribution.update(getTimeDistribution().getNextOccurence(), true, getRate(), environment);
     }
 
@@ -87,9 +90,13 @@ public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position
         return getTau().compareTo(o.getTau());
     }
 
-    protected abstract void action();
+    protected abstract void action(PheromoneLayer<P> phLayer);
 
     public Environment<T, P> getEnvironment() {
         return environment;
+    }
+
+    public Molecule getMolecule() {
+        return molecule;
     }
 }

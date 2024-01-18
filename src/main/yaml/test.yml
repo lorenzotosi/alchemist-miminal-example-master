@@ -7,6 +7,7 @@ variables:
   height: &height
     type: Constant
     parameters: 50
+  moleculeName: &moleculeName pheromone
 
 network-model:
   type: ConnectWithinDistance
@@ -20,10 +21,12 @@ environment:
       type: DiracComb
       parameters: [0, 0.01]
     type: Deposit
+    parameters: [*moleculeName]
   - time-distribution:
       type: DiracComb
       parameters: [ 0, 0.01 ]
     type: Evaporate
+    parameters: [*moleculeName]
 
 
 
@@ -37,7 +40,7 @@ _actions:
       time-distribution: 1
       actions:
         #- type: MoveNode
-        #  parameters: [pheromone]
+        #  parameters: [*moleculeName]
         - type: ReadLayer
           parameters:
 
@@ -47,7 +50,7 @@ deployments:
   type: Rectangle
   parameters: [20, 0, 0, 1, 1]
   contents:
-    molecule: pheromone
+    molecule: *moleculeName
     concentration: 10
   programs:
     - *read
@@ -55,8 +58,8 @@ deployments:
 
 layers:
   - type: PheromoneLayer
-    parameters: [pheromone]
-    molecule: pheromone
+    parameters: [*moleculeName]
+    molecule: *moleculeName
   #- type: NonConvexLayer
   #  parameters: [0.0, 0, 0, 5, 5]
   #  molecule: pheromone
