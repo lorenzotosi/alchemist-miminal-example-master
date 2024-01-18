@@ -13,15 +13,15 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
     private final Double customDiffusionThreshold;
     private final Double neighborhoodDistance;
 
-    public Diffuse(Environment<T, P> environment, TimeDistribution<T> distribution, Molecule molecule,
-                   Double customDiffusionThreshold, Double neighborhoodDistance) {
+    public Diffuse(final Environment<T, P> environment, final TimeDistribution<T> distribution, final Molecule molecule,
+                   final Double customDiffusionThreshold, final Double neighborhoodDistance) {
         super(environment, distribution, molecule);
         this.customDiffusionThreshold = customDiffusionThreshold;
         this.neighborhoodDistance = neighborhoodDistance;
     }
 
     @Override
-    protected void action(PheromoneLayer<P> phLayer) {
+    protected void action(final PheromoneLayer<P> phLayer) {
         var pheromoneMap = phLayer.getMap();
         var dummyMap = new HashMap<P, Double>();
         pheromoneMap.forEach((key, value) -> {
@@ -40,7 +40,7 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
      * @param position
      * @return
      */
-    public List<P> getNeighborhood(P position) {
+    public List<P> getNeighborhood(final P position) {
         var nodes = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
         final var x = position.getX();
         final var y = position.getY();

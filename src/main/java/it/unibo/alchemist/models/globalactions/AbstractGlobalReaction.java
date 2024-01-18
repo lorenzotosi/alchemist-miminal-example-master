@@ -16,7 +16,8 @@ public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position
     private final List<Condition<T>> conditions = new ArrayList<>();
     private final Molecule molecule;
 
-    public AbstractGlobalReaction(Environment<T, P> environment, TimeDistribution<T> distribution, Molecule molecule) {
+    public AbstractGlobalReaction(final Environment<T, P> environment, final TimeDistribution<T> distribution,
+                                  final Molecule molecule) {
         this.environment = environment;
         this.distribution = distribution;
         this.molecule = molecule;
@@ -90,7 +91,7 @@ public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position
         return getTau().compareTo(o.getTau());
     }
 
-    protected abstract void action(PheromoneLayer<P> phLayer);
+    protected abstract void action(final PheromoneLayer<P> phLayer);
 
     public Environment<T, P> getEnvironment() {
         return environment;

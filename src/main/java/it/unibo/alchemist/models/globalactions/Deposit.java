@@ -14,8 +14,8 @@ public class Deposit<P extends Position<P> & Position2D<P>> extends AbstractGlob
     }
 
     @Override
-    protected void action(PheromoneLayer<P> phLayer) {
-        Environment<Double, P> environment = this.getEnvironment();
+    protected void action(final PheromoneLayer<P> phLayer) {
+        final Environment<Double, P> environment = this.getEnvironment();
 
         for (var node : this.node) {
             var pos = environment.getPosition(node);
