@@ -4,10 +4,10 @@ import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.models.layers.PheromoneLayer;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
 
 public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<T, P> {
     private final Double customDiffusionThreshold;
@@ -23,16 +23,25 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
     @Override
     protected void action(PheromoneLayer<P> phLayer) {
         var pheromoneMap = phLayer.getMap();
+        var dummyMap = new HashMap<P, Double>();
         pheromoneMap.forEach((key, value) -> {
-                    if(value>customDiffusionThreshold){
-                        getNeighborhood(key).forEach(x -> pheromoneMap.put(x, value*0.5));
+                    if(value > customDiffusionThreshold){
+                        getNeighborhood(key).forEach(x -> dummyMap.put(x, value*0.5));
                     }
                 }
         );
+        pheromoneMap.putAll(dummyMap);
+        dummyMap.clear();
     }
 
-
+    /**
+     * ho una posizione, trovo il suo intorno e da queste nuove posizioni levo
+     * quelle che eventualmente sono quelle di un nodo
+     * @param position
+     * @return
+     */
     public List<P> getNeighborhood(P position) {
+        var nodes = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
         final var x = position.getX();
         final var y = position.getY();
         final double[] xs = DoubleStream.of(x - neighborhoodDistance, x, x + neighborhoodDistance).toArray();
@@ -40,6 +49,7 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
         return Arrays.stream(xs).boxed()
                 .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> getEnvironment().makePosition(x1, y1)))
                 .filter(p -> !p.equals(position))
+                .filter(p -> !nodes.contains(p))
                 .collect(Collectors.toList());
     }
 }

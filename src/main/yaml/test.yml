@@ -8,11 +8,12 @@ variables:
     type: Constant
     parameters: 50
   moleculeName: &moleculeName pheromone
+  neighborhoodDistance: &distance 1.0
 
 network-model:
   type: ConnectWithinDistance
   parameters:
-    - 1
+    - *distance
 
 environment:
   type: Continuous2DEnvironment
@@ -30,8 +31,8 @@ environment:
   - time-distribution:
       type: DiracComb
       parameters: [0, 0.01]
-    type: Expand
-    parameters: [*moleculeName]
+    type: Diffuse
+    parameters: [*moleculeName, 5.0, *distance]
 
 
 
