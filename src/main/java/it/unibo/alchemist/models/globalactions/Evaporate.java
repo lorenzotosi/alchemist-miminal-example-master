@@ -4,10 +4,7 @@ import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.models.layers.PheromoneLayer;
 
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class Evaporate <P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<Double, P> {
     public Evaporate(Environment<Double, P> environment, TimeDistribution<Double> distribution) {
@@ -20,9 +17,9 @@ public class Evaporate <P extends Position<P> & Position2D<P>> extends AbstractG
     @Override
     /*protected void action() {
         Environment<Double, P> e = this.getEnvironment();
-        Optional<Layer<Double, P>> OptPhL = e.getLayer(new SimpleMolecule("pheromone"));
+        Optional<Layer<Double, P>> optionalPheromoneLayer = e.getLayer(new SimpleMolecule("pheromone"));
         if (OptPhL.isPresent()){
-            PheromoneLayer<P> layer = (PheromoneLayer<P>) OptPhL.get();
+            PheromoneLayer<P> layer = (PheromoneLayer<P>) optionalPheromoneLayer.get();
             var pheromoneMap = layer.getMap();
             if(!pheromoneMap.isEmpty()) {
                 for (var entry : pheromoneMap.entrySet()) {
