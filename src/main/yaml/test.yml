@@ -46,7 +46,7 @@ _actions:
       time-distribution: 1
       actions:
         #- type: MoveNode
-        #  parameters: [*moleculeName]
+        #  parameters: [*distance]
         - type: ReadLayer
           parameters:
 
@@ -55,6 +55,8 @@ _actions:
 deployments:
   type: Rectangle
   parameters: [20, 0, 0, 1, 1]
+  properties:
+    - type: NodeWithDirection
   contents:
     molecule: *moleculeName
     concentration: 10
