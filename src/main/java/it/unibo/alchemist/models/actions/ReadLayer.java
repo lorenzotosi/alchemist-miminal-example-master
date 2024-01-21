@@ -4,6 +4,7 @@ import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 
 import java.util.Optional;
 
@@ -32,6 +33,19 @@ public class ReadLayer<P extends Position<P> & Position2D<P>> extends AbstractAc
             var pos = environment.getPosition(node);
             //layer.addToMap(pos, node.getConcentration(molecule));
             node.setConcentration(molecule, layer.getValue(pos));
+
+            var x = (NodeWithDirection<Double>) node.getProperties().get(1);
+
+            System.out.println(x.getDirection());
+/*
+            var nodes = environment.getNodes().stream().map(environment::getPosition).toList();
+            layer.getMap().forEach((x, y)->{
+                if (!nodes.contains(x)){
+                    var prototype = environment.getNodes().iterator().next();
+                    var mynode = prototype.cloneNode(environment.getSimulation().getTime());
+                    environment.addNode(mynode, x);
+                }
+            } );*/
         }
 
     }
