@@ -9,15 +9,18 @@ public class MoveNode<P extends Position<P>> extends AbstractAction<Integer> {
 
     private final Environment<Integer, P> environment; // implicit value
 
-    public MoveNode(Node<Integer> node, Environment<Integer, P> environment) {
+    private final double distance;
+
+    public MoveNode(Node<Integer> node, Environment<Integer, P> environment, double distance) {
         super(node);
         this.node = node;
         this.environment = environment;
+        this.distance = distance;
     }
 
     @Override
     public Action<Integer> cloneAction(Node<Integer> node, Reaction<Integer> reaction) {
-        return new MoveNode<>(node,  environment);
+        return new MoveNode<>(node,  environment, distance);
     }
 
     @Override
