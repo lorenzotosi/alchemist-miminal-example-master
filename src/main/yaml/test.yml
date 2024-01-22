@@ -8,7 +8,7 @@ variables:
     type: Constant
     parameters: 50
   moleculeName: &moleculeName pheromone
-  neighborhoodDistance: &distance 1.0
+  neighborhoodDistance: &distance 0.1
 
 network-model:
   type: ConnectWithinDistance
@@ -45,8 +45,8 @@ _actions:
     - type: Event
       time-distribution: 1
       actions:
-        #- type: MoveNode
-        #  parameters: [*distance]
+        - type: MoveNode
+          parameters: [*distance, *moleculeName]
         - type: ReadLayer
           parameters:
 
