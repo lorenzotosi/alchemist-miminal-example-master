@@ -14,7 +14,7 @@ public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
 
     public NodeWithDirection(@NotNull Node<T> node) {
         super(node);
-        this.direction = String.valueOf(Directions.DEFAULT.getDirection(new Random().nextInt(4)));
+        this.direction = String.valueOf(Directions.DEFAULT.getDirection(new Random().nextInt(8)));
     }
 
     @NotNull
