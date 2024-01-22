@@ -10,11 +10,11 @@ import java.util.Random;
 
 public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
 
-    private final String direction;
+    private Directions direction;
 
     public NodeWithDirection(@NotNull Node<T> node) {
         super(node);
-        this.direction = String.valueOf(Directions.DEFAULT.getDirection(new Random().nextInt(8)));
+        this.direction = Directions.DEFAULT.getDirection(new Random().nextInt(8));
     }
 
     @NotNull
@@ -23,7 +23,11 @@ public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
         return new NodeWithDirection<>(node);
     }
 
-    public String getDirection(){
+    public Directions getDirection(){
         return this.direction;
+    }
+
+    public void setDirection(final Directions direction, final Node<T> node){
+        this.direction = direction;
     }
 }
