@@ -40,7 +40,7 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
      * @param position
      * @return
      */
-    public List<P> getNeighborhood(final P position) {
+    private List<P> getNeighborhood(final P position) {
         var nodes = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
         final var x = position.getX();
         final var y = position.getY();
