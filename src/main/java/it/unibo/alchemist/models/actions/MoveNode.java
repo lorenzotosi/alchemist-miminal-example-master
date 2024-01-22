@@ -2,36 +2,129 @@ package it.unibo.alchemist.models.actions;
 
 import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
+import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.myEnums.Directions;
+import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 
 
-public class MoveNode<P extends Position<P>> extends AbstractAction<Integer> {
-    private final Node<Integer> node; // implicit value
+public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAction<Double> {
+    private final Node<Double> node; // implicit value
 
-    private final Environment<Integer, P> environment; // implicit value
+    private final Environment<Double, P> environment; // implicit value
+    private final PheromoneLayer<P> pheromoneLayer;
+    private final Double sniffDistance;
+    private final Double wiggleAngle;
+    private final Double wiggleBias;
+    private final Double sniffAngle;
+    private final Double sniffThreshold;
+    private final Molecule molecule;
 
-    private final double distance;
 
-    public MoveNode(Node<Integer> node, Environment<Integer, P> environment, double distance) {
+
+    public MoveNode(final Node<Double> node, final Environment<Double, P> environment, final double distance,
+                    final Molecule molecule, final Double wiggleAngle, final Double wiggleBias,
+                    final Double sniffAngle, final Double sniffThreshold) {
         super(node);
         this.node = node;
         this.environment = environment;
-        this.distance = distance;
+        this.sniffDistance = distance;
+        this.molecule = molecule;
+        this.wiggleAngle = wiggleAngle;
+        this.wiggleBias = wiggleBias;
+        this.sniffAngle = sniffAngle;
+        this.sniffThreshold = sniffThreshold;
+        this.pheromoneLayer = (PheromoneLayer<P>) environment.getLayer(molecule).get();
     }
 
     @Override
-    public Action<Integer> cloneAction(Node<Integer> node, Reaction<Integer> reaction) {
-        return new MoveNode<>(node,  environment, distance);
+    public Action<Double> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
+        return new MoveNode<>(node, environment, sniffDistance, molecule, wiggleAngle, wiggleBias, sniffAngle, sniffThreshold);
     }
 
     @Override
     public void execute() {
-       var currentPosition = environment.getPosition(node);
-       var newPosition = currentPosition.plus(environment.makePosition(0, -1).getCoordinates());
-       environment.moveNodeToPosition(node, newPosition);
+        var currentPosition = environment.getPosition(node);
+        var map = pheromoneLayer.getMap();
+        var possiblePositions = getNeighborhood(currentPosition).stream()
+                .filter(x -> map.containsKey(x) && map.get(x)>sniffThreshold)
+                .toList();
+        //var newPosition = currentPosition.plus(environment.makePosition(0, -1).getCoordinates());
+        var newPosition = findBestPosition(possiblePositions, currentPosition, getCurrentNodeDirection(node));
+        environment.moveNodeToPosition(node, newPosition);
+    }
+
+    private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
+        var directionValue = environment.makePosition((direction.getX()*sniffDistance)+nodePosition.getX(),
+                (direction.getY()*sniffDistance) + nodePosition.getY());
+        var cleanedList = neighborhoodPositions.stream()
+                .filter(x -> x.equals(directionValue))
+                .toList();
+
+        var a = getPositionsInAngle(neighborhoodPositions, directionValue, nodePosition);
+        return nodePosition.plus(environment.makePosition(0, 0).getCoordinates());
     }
 
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD; // it is local because it changes only the local molecule
+    }
+
+    private List<P> getNeighborhood(final P position) {
+        var nodes = environment.getNodes().stream().map(environment::getPosition).toList();
+        final var x = position.getX();
+        final var y = position.getY();
+        final double[] xs = DoubleStream.of(x - sniffDistance, x, x + sniffDistance).toArray();
+        final double[] ys = DoubleStream.of(y - sniffDistance, y, y + sniffDistance).toArray();
+        return Arrays.stream(xs).boxed()
+                .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> environment.makePosition(x1, y1)))
+                .filter(p -> !p.equals(position))
+                .filter(p -> !nodes.contains(p))
+                .collect(Collectors.toList());
+    }
+
+    private Directions getCurrentNodeDirection(final Node<Double> node){
+        var nodeProperty = (NodeWithDirection<Double>) node.getProperties().get(node.getProperties().size()-1);
+        return nodeProperty.getDirection();
+    }
+
+    /**
+     *
+     * @param allPositions
+     * @param forwardPosition davanti
+     * @param center il mio nodo
+     * @return
+     */
+    private List<P> getPositionsInAngle(List<P> allPositions, P forwardPosition, P center) {
+        List<P> positionsInAngle = new ArrayList<>();
+        for (P other : allPositions) {
+            if (!forwardPosition.equals(other)) {
+                double a = calculateAngle(center.getX(), center.getY(), forwardPosition.getX(), forwardPosition.getY(), other.getX(), other.getY());
+                if (Math.abs(a) <= wiggleAngle || Math.abs(a) >= 360 - wiggleAngle) {
+                    positionsInAngle.add(other);
+                }
+            }
+        }
+        return positionsInAngle;
+    }
+
+    private double calculateAngle(double centerX, double centerY, double x1, double y1, double x2, double y2) {
+        double angle1 = Math.atan2(y1 - centerY, x1 - centerX);
+        double angle2 = Math.atan2(y2 - centerY, x2 - centerX);
+
+        double angle = angle2 - angle1;
+
+        if (angle < -Math.PI) {
+            angle += 2 * Math.PI;
+        } else if (angle > Math.PI) {
+            angle -= 2 * Math.PI;
+        }
+
+        return Math.toDegrees(angle);
     }
 }
