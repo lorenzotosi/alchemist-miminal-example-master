@@ -1,14 +1,14 @@
 incarnation: protelis
 
 variables:
-  width: &width
-    type: Constant
-    parameters: 50
-  height: &height
-    type: Constant
-    parameters: 50
   moleculeName: &moleculeName pheromone
   neighborhoodDistance: &distance 0.1
+  wiggleAngle: &wa 40.0
+  wiggleBias: &wb 0.0
+  sniffAngle: &sa 45.0
+  sniffThreshold: &st 4.0
+  customDiffusionThreshold: &dt 5.0
+
 
 network-model:
   type: ConnectWithinDistance
@@ -32,7 +32,7 @@ environment:
       type: DiracComb
       parameters: [0, 0.01]
     type: Diffuse
-    parameters: [*moleculeName, 5.0, *distance]
+    parameters: [*moleculeName, *dt, *distance]
 
 
 
@@ -46,7 +46,7 @@ _actions:
       time-distribution: 1
       actions:
         - type: MoveNode
-          parameters: [*distance, *moleculeName]
+          parameters: [*distance, *moleculeName, *wa, *wb, *sa, *st]
         - type: ReadLayer
           parameters:
 
@@ -54,7 +54,7 @@ _actions:
 
 deployments:
   type: Rectangle
-  parameters: [20, 0, 0, 1, 1]
+  parameters: [1, 0, 0, 1, 1]
   properties:
     - type: NodeWithDirection
   contents:
@@ -68,9 +68,6 @@ layers:
   - type: PheromoneLayer
     parameters: [*moleculeName]
     molecule: *moleculeName
-  #- type: NonConvexLayer
-  #  parameters: [0.0, 0, 0, 5, 5]
-  #  molecule: pheromone
 
 terminate:
   - type: AfterTime
