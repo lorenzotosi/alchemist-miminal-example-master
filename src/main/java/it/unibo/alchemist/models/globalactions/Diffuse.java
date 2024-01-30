@@ -30,7 +30,8 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
                     }
                 }
         );
-        pheromoneMap.putAll(dummyMap);
+        //pheromoneMap.putAll(dummyMap);
+        dummyMap.forEach(phLayer::addToMap);
         dummyMap.clear();
     }
 
@@ -49,7 +50,7 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
         return Arrays.stream(xs).boxed()
                 .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> getEnvironment().makePosition(x1, y1)))
                 .filter(p -> !p.equals(position))
-                .filter(p -> !nodes.contains(p))
+                //.filter(p -> !nodes.contains(p))
                 .collect(Collectors.toList());
     }
 }
