@@ -56,7 +56,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
 
-        if (possiblePositions.isEmpty()){
+        /*if (possiblePositions.isEmpty()){
             var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
             updateNodeDirection(node, newdir);
             environment.moveNodeToPosition(node, environment.makePosition(
@@ -65,8 +65,10 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         } else {
             var newPosition = findBestPosition(possiblePositions, currentPosition, getCurrentNodeDirection(node));
             environment.moveNodeToPosition(node, newPosition);
-        }
-
+        }*/
+        Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
+                .max(Comparator.comparingDouble(pheromoneMap::get));
+        maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
     }
 
     private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){

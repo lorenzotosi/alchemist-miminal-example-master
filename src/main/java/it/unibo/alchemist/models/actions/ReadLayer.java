@@ -32,11 +32,12 @@ public class ReadLayer<P extends Position<P> & Position2D<P>> extends AbstractAc
             PheromoneLayer<P> layer = (PheromoneLayer<P>) OptPhL.get();
             var pos = environment.getPosition(node);
             //layer.addToMap(pos, node.getConcentration(molecule));
-            node.setConcentration(molecule, layer.getValue(pos));
+            //node.setConcentration(molecule, layer.getValue(pos));
 
             var x = (NodeWithDirection<Double>) node.getProperties().get(1);
 
-            System.out.println(x.getDirection());
+            //System.out.println(x.getDirection());
+            node.setConcentration(new SimpleMolecule("pheromoneLayer"), layer.getValue(pos));
 /*
             var nodes = environment.getNodes().stream().map(environment::getPosition).toList();
             layer.getMap().forEach((x, y)->{
