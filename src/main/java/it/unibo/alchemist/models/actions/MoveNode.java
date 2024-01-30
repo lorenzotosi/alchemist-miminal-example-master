@@ -6,9 +6,7 @@ import it.unibo.alchemist.models.layers.PheromoneLayer;
 import it.unibo.alchemist.models.myEnums.Directions;
 import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -25,6 +23,8 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private final Double sniffThreshold;
     private final Molecule molecule;
 
+    private final Map<P, Double> pheromoneMap;
+
 
 
     public MoveNode(final Node<Double> node, final Environment<Double, P> environment, final double distance,
@@ -40,6 +40,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         this.sniffAngle = sniffAngle;
         this.sniffThreshold = sniffThreshold;
         this.pheromoneLayer = (PheromoneLayer<P>) environment.getLayer(molecule).get();
+        this.pheromoneMap = pheromoneLayer.getMap();
     }
 
     @Override
@@ -50,24 +51,38 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     @Override
     public void execute() {
         var currentPosition = environment.getPosition(node);
-        var map = pheromoneLayer.getMap();
+
         var possiblePositions = getNeighborhood(currentPosition).stream()
-                .filter(x -> map.containsKey(x) && map.get(x)>sniffThreshold)
+                .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
-        //var newPosition = currentPosition.plus(environment.makePosition(0, -1).getCoordinates());
-        var newPosition = findBestPosition(possiblePositions, currentPosition, getCurrentNodeDirection(node));
-        environment.moveNodeToPosition(node, newPosition);
+
+        if (possiblePositions.isEmpty()){
+            var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
+            updateNodeDirection(node, newdir);
+            environment.moveNodeToPosition(node, environment.makePosition(
+                    (newdir.getX() * sniffDistance) + currentPosition.getX(),
+                    (newdir.getY() * sniffDistance) + currentPosition.getY()));
+        } else {
+            var newPosition = findBestPosition(possiblePositions, currentPosition, getCurrentNodeDirection(node));
+            environment.moveNodeToPosition(node, newPosition);
+        }
+
     }
 
     private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
         var directionValue = environment.makePosition((direction.getX()*sniffDistance)+nodePosition.getX(),
                 (direction.getY()*sniffDistance) + nodePosition.getY());
-        var cleanedList = neighborhoodPositions.stream()
-                .filter(x -> x.equals(directionValue))
-                .toList();
 
-        var a = getPositionsInAngle(neighborhoodPositions, directionValue, nodePosition);
-        return nodePosition.plus(environment.makePosition(0, 0).getCoordinates());
+        var possiblePositions = getPositionsInAngle(neighborhoodPositions, directionValue, nodePosition);
+        Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
+                .max(Comparator.comparingDouble(pheromoneMap::get));
+        if (maxPosition.isPresent()){
+            return environment.makePosition(maxPosition.get().getX(), maxPosition.get().getY());
+        }
+        var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
+        updateNodeDirection(node, newdir);
+        return environment.makePosition((newdir.getX()*sniffDistance)+nodePosition.getX(),
+                (newdir.getY()*sniffDistance) + nodePosition.getY());
     }
 
     @Override
@@ -126,5 +141,10 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         }
 
         return Math.toDegrees(angle);
+    }
+
+    private void updateNodeDirection(final Node<Double> node, final Directions directions){
+        NodeWithDirection<Double> pNodeWithDirection = (NodeWithDirection<Double>) node.getProperties().get(1);
+        pNodeWithDirection.setDirection(directions, node);
     }
 }
