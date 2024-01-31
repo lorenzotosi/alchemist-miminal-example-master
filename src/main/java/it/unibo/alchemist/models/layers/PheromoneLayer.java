@@ -33,8 +33,15 @@ public class PheromoneLayer<P extends Position2D<P>> implements Layer<Double, P>
     }
 
     @Override
-    public Double getValue(P p) {
+    public Double getValue(final P p) {
         return patches[(int)p.getX()][(int)p.getY()].getPheromoneConcentration();
+    }
+
+    public void addPheromone(final P p, final double concentration){
+        patches[(int)p.getX()][(int)p.getY()].increasePheromoneConcentration(concentration);
+    }
+    public Patch[][] getPatches() {
+        return patches;
     }
 
 }
