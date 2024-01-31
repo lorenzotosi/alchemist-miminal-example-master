@@ -13,33 +13,28 @@ import java.util.Optional;
 public class PheromoneLayer<P extends Position2D<P>> implements Layer<Double, P> {
 
     private final Environment<Double, P> environment;
-
-    //p posizione, double valore
-    private Map<P, Double> map;
+    private final Patch[][] patches;
 
     private final Molecule molecule;
 
-    public PheromoneLayer(Environment<Double, P> environment, Molecule molecule) {
+    public PheromoneLayer(final Environment<Double, P> environment, final Molecule molecule,
+                          final int width, final int height) {
         this.environment = environment;
         this.molecule = molecule;
-        this.map = new HashMap<>();
+        this.patches = new Patch[width][height];
+        setupPatches(width, height);
+
     }
 
-    public void addToMap(P p, Double value){
-        if(map.containsKey(p))
-            map.put(p, (value + map.get(p)));
-        else
-            map.put(p, value);
-    }
-
-    public Map<P, Double> getMap() {
-        //return Map.copyOf(map);
-        return this.map;
+    private void setupPatches(final int width, final int height) {
+        for(int x = 0; x < width; x++)
+            for(int y = 0; y < height; y++)
+                this.patches[x][y] = new Patch(x, y, 0.0);
     }
 
     @Override
     public Double getValue(P p) {
-        return map.getOrDefault(p, 0.0);
+        return patches[(int)p.getX()][(int)p.getY()].getPheromoneConcentration();
     }
 
 }
