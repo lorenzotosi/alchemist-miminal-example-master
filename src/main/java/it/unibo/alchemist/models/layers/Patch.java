@@ -1,5 +1,7 @@
 package it.unibo.alchemist.models.layers;
 
+import it.unibo.alchemist.model.Position2D;
+
 import java.awt.*;
 import java.util.Arrays;
 
@@ -25,5 +27,13 @@ public class Patch  {
 
     public void increasePheromoneConcentration(final double value){
         this.pheromoneConcentration += value;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
     }
 }
