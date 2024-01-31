@@ -22,4 +22,8 @@ public class Patch  {
     public void setPheromoneConcentration(final double value){
         this.pheromoneConcentration = value;
     }
+
+    public void increasePheromoneConcentration(final double value){
+        this.pheromoneConcentration += value;
+    }
 }
