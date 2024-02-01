@@ -1,6 +1,7 @@
 package it.unibo.alchemist.models.globalactions;
 
 import it.unibo.alchemist.model.*;
+import it.unibo.alchemist.models.layers.Patch;
 import it.unibo.alchemist.models.layers.PheromoneLayer;
 
 import java.util.Arrays;
@@ -8,49 +9,46 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<T, P> {
     private final Double customDiffusionThreshold;
-    private final Double neighborhoodDistance;
 
     public Diffuse(final Environment<T, P> environment, final TimeDistribution<T> distribution, final Molecule molecule,
-                   final Double customDiffusionThreshold, final Double neighborhoodDistance) {
+                   final Double customDiffusionThreshold, final Double neighborhoodDistance /*da eliminare*/) {
         super(environment, distribution, molecule);
         this.customDiffusionThreshold = customDiffusionThreshold;
-        this.neighborhoodDistance = neighborhoodDistance;
     }
 
     @Override
     protected void action(final PheromoneLayer<P> phLayer) {
-        var pheromoneMap = phLayer.getMap();
-        var dummyMap = new HashMap<P, Double>();
-        pheromoneMap.forEach((key, value) -> {
-                    if(value > customDiffusionThreshold){
-                        getNeighborhood(key).forEach(x -> dummyMap.put(x, value*0.5));
-                    }
+        var pheromoneMap = phLayer.getPatches();
+        for (Patch[] patches : pheromoneMap) {
+            for (Patch patch : patches) {
+                double value = patch.getPheromoneConcentration();
+                if (value > customDiffusionThreshold) {
+                    var n = getNeighborhood(patch, pheromoneMap).stream().distinct().toList();
+                    n.forEach(x -> x.increasePheromoneConcentration(value*0.5));
                 }
-        );
-        //pheromoneMap.putAll(dummyMap);
-        dummyMap.forEach(phLayer::addToMap);
-        dummyMap.clear();
+            }
+        }
     }
 
     /**
-     * ho una posizione, trovo il suo intorno e da queste nuove posizioni levo
-     * quelle che eventualmente sono quelle di un nodo
+     * ho una dalla patch, trovo il suo intorno e lo ritorno come lista di patch.
+     * il distinct serve per evitare duplicati
      * @param position
      * @return
      */
-    private List<P> getNeighborhood(final P position) {
-        var nodes = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
-        final var x = position.getX();
-        final var y = position.getY();
-        final double[] xs = DoubleStream.of(x - neighborhoodDistance, x, x + neighborhoodDistance).toArray();
-        final double[] ys = DoubleStream.of(y - neighborhoodDistance, y, y + neighborhoodDistance).toArray();
+    private List<Patch> getNeighborhood(final Patch position, final Patch[][] patches) {
+        final int x = position.getX();
+        final int y = position.getY();
+        final int[] xs = IntStream.of(x - 1, x, x + 1).map(i -> (i + patches.length) % patches.length).toArray();
+        final int[] ys = IntStream.of(y - 1, y, y + 1).map(i -> (i + patches.length) % patches.length).toArray();
         return Arrays.stream(xs).boxed()
-                .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> getEnvironment().makePosition(x1, y1)))
+                .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> patches[x1][y1]))
                 .filter(p -> !p.equals(position))
-                //.filter(p -> !nodes.contains(p))
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
