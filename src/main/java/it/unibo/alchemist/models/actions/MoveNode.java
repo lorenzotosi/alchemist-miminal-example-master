@@ -2,6 +2,7 @@ package it.unibo.alchemist.models.actions;
 
 import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
+import it.unibo.alchemist.models.layers.Patch;
 import it.unibo.alchemist.models.layers.PheromoneLayer;
 import it.unibo.alchemist.models.myEnums.Directions;
 import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
@@ -9,6 +10,7 @@ import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import java.util.stream.IntStream;
 
 
 public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAction<Double> {
@@ -23,7 +25,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private final Double sniffThreshold;
     private final Molecule molecule;
 
-    private final Map<P, Double> pheromoneMap;
+    private final Patch[][] patches;
 
 
 
@@ -40,7 +42,12 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         this.sniffAngle = sniffAngle;
         this.sniffThreshold = sniffThreshold;
         this.pheromoneLayer = (PheromoneLayer<P>) environment.getLayer(molecule).get();
-        this.pheromoneMap = pheromoneLayer.getMap();
+        this.patches = pheromoneLayer.getPatches();
+    }
+
+    @Override
+    public Context getContext() {
+        return Context.NEIGHBORHOOD; // it is local because it changes only the local molecule
     }
 
     @Override
@@ -50,58 +57,48 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
 
     @Override
     public void execute() {
-        var currentPosition = environment.getPosition(node);
+        var realDoublePosition = environment.getPosition(node);
+        var currentPosition = adaptCurrentNodePosition(realDoublePosition);
 
+
+
+        /*
         var possiblePositions = getNeighborhood(currentPosition).stream()
-                .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
+                .filter(x -> patches.containsKey(x) && patches.get(x)>sniffThreshold)
                 .toList();
 
-        /*if (possiblePositions.isEmpty()){
-            var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
-            updateNodeDirection(node, newdir);
-            environment.moveNodeToPosition(node, environment.makePosition(
-                    (newdir.getX() * sniffDistance) + currentPosition.getX(),
-                    (newdir.getY() * sniffDistance) + currentPosition.getY()));
-        } else {
-            var newPosition = findBestPosition(possiblePositions, currentPosition, getCurrentNodeDirection(node));
-            environment.moveNodeToPosition(node, newPosition);
-        }*/
-        Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
-                .max(Comparator.comparingDouble(pheromoneMap::get));
+
+        Optional<P> maxPosition = possiblePositions.stream().filter(patches::containsKey)
+                .max(Comparator.comparingDouble(patches::get));
         maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
+        */
+
+    }
+
+    private Patch adaptCurrentNodePosition(final P position){
+        return new Patch((int)position.getX(), (int)position.getY(), 0.0);
     }
 
     private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
-        var directionValue = environment.makePosition((direction.getX()*sniffDistance)+nodePosition.getX(),
-                (direction.getY()*sniffDistance) + nodePosition.getY());
 
-        var possiblePositions = getPositionsInAngle(neighborhoodPositions, directionValue, nodePosition);
-        Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
-                .max(Comparator.comparingDouble(pheromoneMap::get));
-        if (maxPosition.isPresent()){
-            return environment.makePosition(maxPosition.get().getX(), maxPosition.get().getY());
-        }
-        var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
-        updateNodeDirection(node, newdir);
-        return environment.makePosition((newdir.getX()*sniffDistance)+nodePosition.getX(),
-                (newdir.getY()*sniffDistance) + nodePosition.getY());
+        return null;
     }
 
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD; // it is local because it changes only the local molecule
-    }
-
-    private List<P> getNeighborhood(final P position) {
-        var nodes = environment.getNodes().stream().map(environment::getPosition).toList();
-        final var x = position.getX();
-        final var y = position.getY();
-        final double[] xs = DoubleStream.of(x - sniffDistance, x, x + sniffDistance).toArray();
-        final double[] ys = DoubleStream.of(y - sniffDistance, y, y + sniffDistance).toArray();
+    /**
+     * ho una dalla patch, trovo il suo intorno e lo ritorno come lista di patch.
+     * il distinct serve per evitare duplicati
+     * @param position
+     * @return
+     */
+    private List<Patch> getNeighborhood(final Patch position, final Patch[][] patches) {
+        final int x = position.getX();
+        final int y = position.getY();
+        final int[] xs = IntStream.of(x - 1, x, x + 1).map(i -> (i + patches.length) % patches.length).toArray();
+        final int[] ys = IntStream.of(y - 1, y, y + 1).map(i -> (i + patches.length) % patches.length).toArray();
         return Arrays.stream(xs).boxed()
-                .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> environment.makePosition(x1, y1)))
+                .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> patches[x1][y1]))
                 .filter(p -> !p.equals(position))
-                .filter(p -> !nodes.contains(p))
+                .distinct()
                 .collect(Collectors.toList());
     }
 
