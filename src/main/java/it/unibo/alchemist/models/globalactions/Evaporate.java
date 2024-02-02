@@ -30,12 +30,18 @@ public class Evaporate<P extends Position<P> & Position2D<P>> extends AbstractGl
 */
     protected void action(final PheromoneLayer<P> phLayer) {
         var pheromoneMap = phLayer.getMap();
-        pheromoneMap.entrySet().removeIf(entry -> {
+        /*pheromoneMap.entrySet().removeIf(entry -> {
             double updatedValue = entry.getValue() * 0.9;
             if (updatedValue > 0.0){
                 pheromoneMap.put(entry.getKey(), updatedValue);
             }
             return updatedValue <= 0.0;
+        });
+         */
+        pheromoneMap.forEach((key, value) -> {
+            if(value > 0){
+                pheromoneMap.put(key, value*0.9);
+            }
         });
     }
 

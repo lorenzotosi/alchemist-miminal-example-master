@@ -51,8 +51,8 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     @Override
     public void execute() {
         var currentPosition = environment.getPosition(node);
-
-        var possiblePositions = getNeighborhood(currentPosition).stream()
+        var pos = pheromoneLayer.adaptPosition(currentPosition);
+        var possiblePositions = getNeighborhood(pos).stream()
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
 

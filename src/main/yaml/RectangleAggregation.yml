@@ -2,7 +2,7 @@ incarnation: protelis
 
 variables:
   moleculeName: &moleculeName pheromone
-  neighborhoodDistance: &distance 1
+  neighborhoodDistance: &distance 0.5
   wiggleAngle: &wa 46.0
   wiggleBias: &wb 0.0
   sniffAngle: &sa 45.0
@@ -53,7 +53,7 @@ _actions:
 
 deployments:
   type: Rectangle
-  parameters: [10, 0, 0, 1, 1]
+  parameters: [500, -10, -10, 20, 20]
   properties:
     - type: NodeWithDirection
   contents:
@@ -65,7 +65,7 @@ deployments:
 
 layers:
   - type: PheromoneLayer
-    parameters: [*moleculeName]
+    parameters: [*moleculeName, -15, -15, 30, 30, *distance]
     molecule: *moleculeName
 
 terminate:
