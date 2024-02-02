@@ -4,20 +4,26 @@ import it.unibo.alchemist.model.Position2D;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Patch  {
 
-    private double pheromoneConcentration;
-    private final int x;
-    private final int y;
+    //private double pheromoneConcentration;
+    private final Double x;
+    private final Double y;
 
-    public Patch(int x, int y, double pheromoneConcentration) {
+    /*public Patch(final Double x, final Double y, double pheromoneConcentration) {
         this.pheromoneConcentration = pheromoneConcentration;
+        this.x = x;
+        this.y = y;
+    }*/
+
+    public Patch(final Double x, final Double y) {
         this.x = x;
         this.y = y;
     }
 
-    public Double getPheromoneConcentration(){
+    /*public Double getPheromoneConcentration(){
         return this.pheromoneConcentration;
     }
 
@@ -27,13 +33,13 @@ public class Patch  {
 
     public void increasePheromoneConcentration(final double value){
         this.pheromoneConcentration += value;
-    }
+    }*/
 
-    public int getX() {
+    public Double getX() {
         return x;
     }
 
-    public int getY() {
+    public Double getY() {
         return y;
     }
 
@@ -42,14 +48,14 @@ public class Patch  {
         if (this == o) return true;
         if (!(o instanceof Patch patch)) return false;
 
-        if (x != patch.x) return false;
-        return y == patch.y;
+        if (!Objects.equals(x, patch.x)) return false;
+        return Objects.equals(y, patch.y);
     }
 
     @Override
     public int hashCode() {
-        int result = x;
-        result = 31 * result + y;
+        int result = x != null ? x.hashCode() : 0;
+        result = 31 * result + (y != null ? y.hashCode() : 0);
         return result;
     }
 }
