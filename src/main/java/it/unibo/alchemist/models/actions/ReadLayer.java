@@ -3,7 +3,7 @@ package it.unibo.alchemist.models.actions;
 import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
-import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 
 import java.util.Optional;
@@ -29,7 +29,7 @@ public class ReadLayer<P extends Position<P> & Position2D<P>> extends AbstractAc
     public void execute() {
         Optional<Layer<Double, P>> OptPhL = environment.getLayer(molecule);
         if (OptPhL.isPresent()){
-            PheromoneLayer<P> layer = (PheromoneLayer<P>) OptPhL.get();
+            PheromoneLayerImpl<P> layer = (PheromoneLayerImpl<P>) OptPhL.get();
             var pos = environment.getPosition(node);
             //layer.addToMap(pos, node.getConcentration(molecule));
             //node.setConcentration(molecule, layer.getValue(pos));

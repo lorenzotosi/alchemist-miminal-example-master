@@ -1,7 +1,7 @@
 package it.unibo.alchemist.models.globalactions;
 
 import it.unibo.alchemist.model.*;
-import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 
 public class Evaporate<P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<Double, P> {
     public Evaporate(final Environment<Double, P> environment, final TimeDistribution<Double> distribution,
@@ -28,7 +28,7 @@ public class Evaporate<P extends Position<P> & Position2D<P>> extends AbstractGl
             });
         }
 */
-    protected void action(final PheromoneLayer<P> phLayer) {
+    protected void action(final PheromoneLayerImpl<P> phLayer) {
         var pheromoneMap = phLayer.getMap();
         /*pheromoneMap.entrySet().removeIf(entry -> {
             double updatedValue = entry.getValue() * 0.9;

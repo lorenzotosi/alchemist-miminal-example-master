@@ -2,7 +2,7 @@ package it.unibo.alchemist.models.actions;
 
 import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
-import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 import it.unibo.alchemist.models.myEnums.Directions;
 import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 
@@ -15,7 +15,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private final Node<Double> node; // implicit value
 
     private final Environment<Double, P> environment; // implicit value
-    private final PheromoneLayer<P> pheromoneLayer;
+    private final PheromoneLayerImpl<P> pheromoneLayer;
     private final Double sniffDistance;
     private final Double wiggleAngle;
     private final Double wiggleBias;
@@ -39,7 +39,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         this.wiggleBias = wiggleBias;
         this.sniffAngle = sniffAngle;
         this.sniffThreshold = sniffThreshold;
-        this.pheromoneLayer = (PheromoneLayer<P>) environment.getLayer(molecule).get();
+        this.pheromoneLayer = (PheromoneLayerImpl<P>) environment.getLayer(molecule).get();
         this.pheromoneMap = pheromoneLayer.getMap();
     }
 
@@ -68,6 +68,9 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         }*/
         Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
                 .max(Comparator.comparingDouble(pheromoneMap::get));
+
+
+
         maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
     }
 

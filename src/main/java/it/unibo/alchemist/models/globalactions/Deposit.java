@@ -1,7 +1,7 @@
 package it.unibo.alchemist.models.globalactions;
 
 import it.unibo.alchemist.model.*;
-import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 import org.danilopianini.util.ListSet;
 
 public class Deposit<P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<Double, P> {
@@ -16,7 +16,7 @@ public class Deposit<P extends Position<P> & Position2D<P>> extends AbstractGlob
     }
 
     @Override
-    protected void action(final PheromoneLayer<P> phLayer) {
+    protected void action(final PheromoneLayerImpl<P> phLayer) {
         final Environment<Double, P> environment = this.getEnvironment();
 
         for (var node : this.node) {
