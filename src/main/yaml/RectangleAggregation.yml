@@ -2,12 +2,12 @@ incarnation: protelis
 
 variables:
   moleculeName: &moleculeName pheromone
-  neighborhoodDistance: &distance 0.5
-  wiggleAngle: &wa 46.0
+  neighborhoodDistance: &distance 0.25
+  wiggleAngle: &wa 45.0
   wiggleBias: &wb 0.0
   sniffAngle: &sa 45.0
   sniffThreshold: &st 0.0
-  customDiffusionThreshold: &dt 0.0
+  customDiffusionThreshold: &dt 1.0
   xStart : &xS -10
   yStart : &yS -10
   width : &width 20
@@ -62,13 +62,13 @@ deployments:
     - type: NodeWithDirection
   contents:
     molecule: *moleculeName
-    concentration: 1
+    concentration: 2
   programs:
     - *read
 
 
 layers:
-  - type: PheromoneLayer
+  - type: PheromoneLayerImpl
     parameters: [*moleculeName, *xS, *yS, *width, *height, *distance]
     molecule: *moleculeName
 
