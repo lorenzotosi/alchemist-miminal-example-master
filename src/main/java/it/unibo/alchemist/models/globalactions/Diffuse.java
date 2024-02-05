@@ -1,7 +1,7 @@
 package it.unibo.alchemist.models.globalactions;
 
 import it.unibo.alchemist.model.*;
-import it.unibo.alchemist.models.layers.PheromoneLayer;
+import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,18 +21,27 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
     }
 
     @Override
-    protected void action(final PheromoneLayer<P> phLayer) {
+    protected void action(final PheromoneLayerImpl<P> phLayer) {
         var pheromoneMap = phLayer.getMap();
         var dummyMap = new HashMap<P, Double>();
-        pheromoneMap.forEach((key, value) -> {
+        var nodeList = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
+        nodeList.forEach(p -> {
+            var nPos = phLayer.adaptPosition(p);
+            var pValue = pheromoneMap.getOrDefault(nPos, 0.0);
+            if (pValue > customDiffusionThreshold)
+                getNeighborhood(nPos).forEach(x -> dummyMap.put(x, pValue*0.5));
+        });
+        dummyMap.forEach(phLayer::addToMap);
+
+        /*pheromoneMap.forEach((key, value) -> {
                     if(value > customDiffusionThreshold){
                         getNeighborhood(key).forEach(x -> dummyMap.put(x, value*0.5));
                     }
                 }
         );
-        //pheromoneMap.putAll(dummyMap);
         dummyMap.forEach(phLayer::addToMap);
-        dummyMap.clear();
+        dummyMap.clear();*/
+
     }
 
     /**
@@ -42,7 +51,7 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
      * @return
      */
     private List<P> getNeighborhood(final P position) {
-        var nodes = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
+        //var nodes = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
         final var x = position.getX();
         final var y = position.getY();
         final double[] xs = DoubleStream.of(x - neighborhoodDistance, x, x + neighborhoodDistance).toArray();
