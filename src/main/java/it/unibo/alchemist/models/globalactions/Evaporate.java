@@ -3,10 +3,12 @@ package it.unibo.alchemist.models.globalactions;
 import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 
-public class Evaporate<P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<Double, P> {
-    public Evaporate(final Environment<Double, P> environment, final TimeDistribution<Double> distribution,
-                     final Molecule molecule) {
+public class Evaporate<T, P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<T, P> {
+    private final Double evaporationValue;
+    public Evaporate(final Environment<T, P> environment, final TimeDistribution<T> distribution,
+                     final Molecule molecule, final Double evaporationValue) {
         super(environment, distribution, molecule);
+        this.evaporationValue = evaporationValue;
     }
 
     /**
@@ -40,7 +42,7 @@ public class Evaporate<P extends Position<P> & Position2D<P>> extends AbstractGl
          */
         pheromoneMap.forEach((key, value) -> {
             if(value > 0){
-                pheromoneMap.put(key, value*0.9);
+                pheromoneMap.put(key, value*evaporationValue);
             }
         });
     }

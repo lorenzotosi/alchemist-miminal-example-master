@@ -12,12 +12,15 @@ import java.util.stream.DoubleStream;
 public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractGlobalReaction<T, P> {
     private final Double customDiffusionThreshold;
     private final Double neighborhoodDistance;
+    private final Double diffusionValue;
 
     public Diffuse(final Environment<T, P> environment, final TimeDistribution<T> distribution, final Molecule molecule,
-                   final Double customDiffusionThreshold, final Double neighborhoodDistance) {
+                   final Double customDiffusionThreshold, final Double neighborhoodDistance,
+                   final Double diffusionValue) {
         super(environment, distribution, molecule);
         this.customDiffusionThreshold = customDiffusionThreshold;
         this.neighborhoodDistance = neighborhoodDistance;
+        this.diffusionValue = diffusionValue;
     }
 
     @Override
@@ -29,13 +32,13 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
             var nPos = phLayer.adaptPosition(p);
             var pValue = pheromoneMap.getOrDefault(nPos, 0.0);
             if (pValue > customDiffusionThreshold)
-                getNeighborhood(nPos).forEach(x -> dummyMap.put(x, pValue*0.5));
+                getNeighborhood(nPos).forEach(x -> dummyMap.put(x, pValue* diffusionValue));
         });
         dummyMap.forEach(phLayer::deposit);
 
         /*pheromoneMap.forEach((key, value) -> {
                     if(value > customDiffusionThreshold){
-                        getNeighborhood(key).forEach(x -> dummyMap.put(x, value*0.5));
+                        getNeighborhood(key).forEach(x -> dummyMap.put(x, value*diffusionValue));
                     }
                 }
         );
