@@ -31,7 +31,7 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
             if (pValue > customDiffusionThreshold)
                 getNeighborhood(nPos).forEach(x -> dummyMap.put(x, pValue*0.5));
         });
-        dummyMap.forEach(phLayer::addToMap);
+        dummyMap.forEach(phLayer::deposit);
 
         /*pheromoneMap.forEach((key, value) -> {
                     if(value > customDiffusionThreshold){

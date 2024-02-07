@@ -21,7 +21,7 @@ public class Deposit<P extends Position<P> & Position2D<P>> extends AbstractGlob
 
         for (var node : this.node) {
             var pos = environment.getPosition(node);
-            phLayer.addToMap(pos, pheromoneDepositValue);
+            phLayer.deposit(pos, pheromoneDepositValue);
         }
     }
 

@@ -8,7 +8,7 @@ import it.unibo.alchemist.model.Position2D;
 import java.util.HashMap;
 import java.util.Map;
 
-public class PheromoneLayerImpl<P extends Position2D<P>> implements Layer<Double, P>, PheromoneLayer<P> {
+public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLayer<P> {
 
     private final Environment<Double, P> environment;
 
@@ -45,7 +45,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements Layer<Double
         System.out.println("a");*/
     }
     @Override
-    public void addToMap(final P p, final Double value){
+    public void deposit(final P p, final Double value){
         var mapPosition = adaptPosition(p);
         if(map.containsKey(mapPosition))
             map.put(mapPosition, (value + map.get(mapPosition)));
@@ -78,7 +78,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements Layer<Double
             return nextRoundValue;
         }
     }
-    @Override
+
     public P adaptPosition(final P position){
         var x = roundToClosestPosition(position.getX(), step, width);
         var y = roundToClosestPosition(position.getY(), step, height);

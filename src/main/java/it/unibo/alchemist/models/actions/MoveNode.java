@@ -55,7 +55,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         var possiblePositions = getNeighborhood(pos).stream()
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
-
+        
         /*if (possiblePositions.isEmpty()){
             var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
             updateNodeDirection(node, newdir);
