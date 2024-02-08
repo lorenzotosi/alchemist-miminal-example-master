@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 /**
- * This class represents a global reaction that diffuses the pheromone value to it's neighborhood.
+ * This class represents a global reaction that diffuses the pheromone value to its neighborhood.
  *
  * @param <T> The type of the molecule being diffused.
  * @param <P> The type of the position in the environment.
