@@ -8,11 +8,18 @@ import it.unibo.alchemist.model.Position2D;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class represents a layer of pheromones in the environment.
+ * Pheromone values are stored in a map, where each position is associated with a pheromone value.
+ * The map's punctiform positions rapresent the starting point of an area in which the nodes can deposit a pheromone.
+ * Implementation of the @link{PheromoneLayer} interface.
+ *
+ * @param <P> the type of position in the environment
+ */
 public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLayer<P> {
 
     private final Environment<Double, P> environment;
 
-    //p posizione, double valore
     private final Map<P, Double> map;
     private final Double step;
     private final Double width;
@@ -20,6 +27,17 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
 
     private final Molecule molecule;
 
+    /**
+     * PheromoneLayerImpl's constructor.
+     *
+     * @param environment the environment in which the pheromone layer exists
+     * @param molecule the molecule associated with the pheromone layer
+     * @param startX the starting x-coordinate of the layer
+     * @param startY the starting y-coordinate of the layer
+     * @param width the width of the layer
+     * @param height the height of the layer
+     * @param step the step size of the area
+     */
     public PheromoneLayerImpl(final Environment<Double, P> environment, final Molecule molecule,
                               final Double startX, final Double startY,
                               final Double width, final Double height, final Double step) {
@@ -30,20 +48,9 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         this.width = width;
         this.height = height;
 
-        for (double x = startX; x < width - Math.abs(startX); x = x + step){
-            for (double y = startY; y < height - Math.abs(startY); y = y + step){
-                map.put(environment.makePosition(x, y), 0.0);
-            }
-        }
-        /*
-        var x1 = roundToClosestPosition(-7.23, 0.25, 10);
-        var x2 = roundToClosestPosition(7.23, 0.5, 10);
-        var x3 = roundToClosestPosition(7.23, 1, 10);
-        var x4 = roundToClosestPosition(5.73, 0.25, 10);
-        var x5 = roundToClosestPosition(0.23, 0.25, 10);
-
-        System.out.println("a");*/
+        setupEnvironment();
     }
+    
     @Override
     public void deposit(final P p, final Double value){
         var mapPosition = adaptPosition(p);
@@ -53,6 +60,11 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
             //map.put(mapPosition, value);
     }
 
+    /**
+     * Returns the map of pheromone values.
+     *
+     * @return the map
+     */
     public Map<P, Double> getMap() {
         //return Map.copyOf(map);
         return this.map;
@@ -61,6 +73,18 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     @Override
     public Double getValue(final P p) {
         return map.getOrDefault(adaptPosition(p), 0.0);
+    }
+
+    /**
+     * Adapts the position to the closest grid point in the PheromoneLayer.
+     *
+     * @param position the original position to be adapted
+     * @return the adapted position
+     */
+    public P adaptPosition(final P position){
+        var x = roundToClosestPosition(position.getX(), step, width);
+        var y = roundToClosestPosition(position.getY(), step, height);
+        return environment.makePosition(x, y);
     }
 
     private double roundToClosestPosition(final double value, final double step, double maxValue) {
@@ -79,10 +103,12 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         }
     }
 
-    public P adaptPosition(final P position){
-        var x = roundToClosestPosition(position.getX(), step, width);
-        var y = roundToClosestPosition(position.getY(), step, height);
-        return environment.makePosition(x, y);
+    private void setupEnvironment(){
+        for (double x = startX; x < width - Math.abs(startX); x = x + step){
+            for (double y = startY; y < height - Math.abs(startY); y = y + step){
+                map.put(environment.makePosition(x, y), 0.0);
+            }
+        }
     }
 
 }

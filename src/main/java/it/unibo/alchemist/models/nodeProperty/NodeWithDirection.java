@@ -8,10 +8,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
+/**
+ * Represents a node property that includes a direction.
+ *
+ * @param <T> the type of the node property value
+ */
 public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
 
     private Directions direction;
 
+    /**
+     * Constructs a new NodeWithDirection object with a random direction.
+     *
+     * @param node the node
+     */
     public NodeWithDirection(@NotNull Node<T> node) {
         super(node);
         this.direction = Directions.DEFAULT.getDirection(new Random().nextInt(8));
@@ -23,10 +33,21 @@ public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
         return new NodeWithDirection<>(node);
     }
 
+    /**
+     * Gets the direction of a node.
+     *
+     * @return the direction
+     */
     public Directions getDirection(){
         return this.direction;
     }
 
+    /**
+     * Sets the direction of a node.
+     *
+     * @param direction the new direction
+     * @param node the node 
+     */
     public void setDirection(final Directions direction, final Node<T> node){
         this.direction = direction;
     }
