@@ -48,7 +48,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         this.width = width;
         this.height = height;
 
-        setupEnvironment();
+        setupEnvironment(startX, startY);
     }
     
     @Override
@@ -103,7 +103,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         }
     }
 
-    private void setupEnvironment(){
+    private void setupEnvironment(final Double startX, final Double startY){
         for (double x = startX; x < width - Math.abs(startX); x = x + step){
             for (double y = startY; y < height - Math.abs(startY); y = y + step){
                 map.put(environment.makePosition(x, y), 0.0);
