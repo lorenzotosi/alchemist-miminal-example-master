@@ -9,7 +9,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position2D<P>> implements GlobalReaction<T> {
+public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position2D<P>>
+        implements PheromoneGlobalReaction<T, P> {
     private final Environment<T, P> environment;
     private final TimeDistribution<T> distribution;
     private final List<Action<T>> actions = new ArrayList<>();
@@ -90,14 +91,11 @@ public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position
     public int compareTo(@NotNull Actionable<T> o) {
         return getTau().compareTo(o.getTau());
     }
+    @Override
+    public abstract void action(final PheromoneLayerImpl<P> phLayer);
 
-    protected abstract void action(final PheromoneLayerImpl<P> phLayer);
-
-    public Environment<T, P> getEnvironment() {
+    protected Environment<T, P> getEnvironment() {
         return environment;
     }
 
-    public Molecule getMolecule() {
-        return molecule;
-    }
 }

@@ -16,7 +16,7 @@ public class Deposit<T, P extends Position<P> & Position2D<P>> extends AbstractG
     }
 
     @Override
-    protected void action(final PheromoneLayerImpl<P> phLayer) {
+    public void action(final PheromoneLayerImpl<P> phLayer) {
         final Environment<T, P> environment = this.getEnvironment();
 
         for (var node : this.node) {
