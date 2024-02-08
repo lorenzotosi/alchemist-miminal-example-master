@@ -52,26 +52,38 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     public void execute() {
         var currentPosition = environment.getPosition(node);
         var pos = pheromoneLayer.adaptPosition(currentPosition);
-        var possiblePositions = getNeighborhood(pos).stream()
+        var possibleDirections = getNeighborhood(pos).stream()
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
-        
-        /*if (possiblePositions.isEmpty()){
+
+        /*if (possibleDirections.isEmpty()){
             var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
             updateNodeDirection(node, newdir);
             environment.moveNodeToPosition(node, environment.makePosition(
                     (newdir.getX() * sniffDistance) + currentPosition.getX(),
                     (newdir.getY() * sniffDistance) + currentPosition.getY()));
         } else {
-            var newPosition = findBestPosition(possiblePositions, currentPosition, getCurrentNodeDirection(node));
+            var newPosition = findBestPosition(possibleDirections, currentPosition, getCurrentNodeDirection(node));
             environment.moveNodeToPosition(node, newPosition);
         }*/
-        Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
+        Optional<P> maxPosition = possibleDirections.stream().filter(pheromoneMap::containsKey)
                 .max(Comparator.comparingDouble(pheromoneMap::get));
 
+        if (maxPosition.isPresent()) {
+            var xx = maxPosition.get().getX() - pos.getX();
+            var yy = maxPosition.get().getY() - pos.getY();
+            //var pp = environment.makePosition(pos.getX()+xx, pos.getY()+yy);
+            var pp2 = environment.makePosition(currentPosition.getX()+xx, currentPosition.getY()+yy);
+            maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, pp2));
+        } else {
+            var newDirection = Directions.DEFAULT.getDirection(new Random().nextInt(8));
+            updateNodeDirection(node, newDirection);
+            environment.moveNodeToPosition(node, environment.makePosition(
+                    (newDirection.getX() * sniffDistance) + currentPosition.getX(),
+                    (newDirection.getY() * sniffDistance) + currentPosition.getY()));
+        }
+        //maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
 
-
-        maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
     }
 
     private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
