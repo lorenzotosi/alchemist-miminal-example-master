@@ -12,9 +12,8 @@ import java.util.stream.DoubleStream;
 
 
 public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAction<Double> {
-    private final Node<Double> node; // implicit value
-
-    private final Environment<Double, P> environment; // implicit value
+    private final Node<Double> node;
+    private final Environment<Double, P> environment;
     private final PheromoneLayerImpl<P> pheromoneLayer;
     private final Double sniffDistance;
     private final Double wiggleAngle;
@@ -22,7 +21,6 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private final Double sniffAngle;
     private final Double sniffThreshold;
     private final Molecule molecule;
-
     private final Map<P, Double> pheromoneMap;
 
 
