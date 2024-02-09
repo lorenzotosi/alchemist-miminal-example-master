@@ -3,6 +3,7 @@ package it.unibo.alchemist.models.layers;
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Position2D;
+import it.unibo.alchemist.models.actions.MoveNode;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -66,17 +67,20 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     }
 
     /**
-     * Returns the map of pheromone values.
+     * Returns the pheromone map.
      *
-     * @return the map
+     * @return a copy of the map
      */
     public Map<P, Double> getPheromoneMap() {
         return Map.copyOf(this.pheromoneMap);
-        //return this.map;
     }
 
-    public Map<P, Double> getMapp() {
-        //return Map.copyOf(this.map);
+    /**
+     * This method is needed and used only the {@link MoveNode} because calling the getPheromoneMap method
+     * will slow down the program.
+     * @return the map
+     */
+    public Map<P, Double> getMap() {
         return this.pheromoneMap;
     }
 
