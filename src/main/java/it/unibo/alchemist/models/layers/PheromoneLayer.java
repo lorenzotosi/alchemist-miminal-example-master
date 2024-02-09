@@ -18,4 +18,12 @@ public interface PheromoneLayer<P extends Position2D<P>> extends Layer<Double, P
      * @param value The pheromone value associated to the grid position
      */
     void deposit(P p, Double value);
+
+    /**
+     * Evaporates the specified pheromone value at the given position.
+     *
+     * @param p The patch position
+     * @param value The pheromone value associated to the grid position
+     */
+    void evaporate(P p, Double value);
 }

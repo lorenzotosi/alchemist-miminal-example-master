@@ -1,7 +1,6 @@
 package it.unibo.alchemist.models.layers;
 
 import it.unibo.alchemist.model.Environment;
-import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Position2D;
 
@@ -20,7 +19,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
 
     private final Environment<Double, P> environment;
 
-    private final Map<P, Double> map;
+    private final Map<P, Double> pheromoneMap;
     private final Double step;
     private final Double width;
     private final Double height;
@@ -43,7 +42,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
                               final Double width, final Double height, final Double step) {
         this.environment = environment;
         this.molecule = molecule;
-        this.map = new HashMap<>();
+        this.pheromoneMap = new HashMap<>();
         this.step = step;
         this.width = width;
         this.height = height;
@@ -54,10 +53,16 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     @Override
     public void deposit(final P p, final Double value){
         var mapPosition = adaptPosition(p);
-        if(map.containsKey(mapPosition))
-            map.put(mapPosition, (value + map.get(mapPosition)));
+        if(pheromoneMap.containsKey(mapPosition))
+            pheromoneMap.put(mapPosition, (value + pheromoneMap.get(mapPosition)));
         //else
             //map.put(mapPosition, value);
+    }
+
+    @Override
+    public void evaporate(final P p, final Double value){
+        if(pheromoneMap.containsKey(p))
+            pheromoneMap.put(p, value);
     }
 
     /**
@@ -65,14 +70,19 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
      *
      * @return the map
      */
-    public Map<P, Double> getMap() {
-        //return Map.copyOf(map);
-        return this.map;
+    public Map<P, Double> getPheromoneMap() {
+        return Map.copyOf(this.pheromoneMap);
+        //return this.map;
+    }
+
+    public Map<P, Double> getMapp() {
+        //return Map.copyOf(this.map);
+        return this.pheromoneMap;
     }
 
     @Override
     public Double getValue(final P p) {
-        return map.getOrDefault(adaptPosition(p), 0.0);
+        return pheromoneMap.getOrDefault(adaptPosition(p), 0.0);
     }
 
     /**
@@ -106,7 +116,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     private void setupEnvironment(final Double startX, final Double startY){
         for (double x = startX; x < width - Math.abs(startX); x = x + step){
             for (double y = startY; y < height - Math.abs(startY); y = y + step){
-                map.put(environment.makePosition(x, y), 0.0);
+                pheromoneMap.put(environment.makePosition(x, y), 0.0);
             }
         }
     }
