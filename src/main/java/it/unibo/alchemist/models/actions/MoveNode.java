@@ -6,7 +6,9 @@ import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
 import it.unibo.alchemist.models.myEnums.Directions;
 import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
@@ -22,6 +24,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private final Double sniffThreshold;
     private final Molecule molecule;
     private final Map<P, Double> pheromoneMap;
+    private final Rectangle layerBounds;
 
 
 
@@ -39,6 +42,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         this.sniffThreshold = sniffThreshold;
         this.pheromoneLayer = (PheromoneLayerImpl<P>) environment.getLayer(molecule).get();
         this.pheromoneMap = pheromoneLayer.getMap();
+        this.layerBounds = pheromoneLayer.getLayerBounds();
     }
 
     @Override
@@ -54,6 +58,21 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
 
+        Optional<P> maxPosition = possibleDirections.stream().filter(pheromoneMap::containsKey)
+                .max(Comparator.comparingDouble(pheromoneMap::get));
+
+        if (maxPosition.isPresent()) {
+            var nextPosition = createNextPosition(maxPosition.get().getX(), maxPosition.get().getY(),
+                    currentPosition, pos, layerBounds);
+            environment.moveNodeToPosition(node, nextPosition);
+        } else {
+            var newDirection = Directions.DEFAULT.getDirection(new Random().nextInt(8));
+            updateNodeDirection(node, newDirection);
+            var newX = validateCoordinate((newDirection.getX() * sniffDistance) + currentPosition.getX(), layerBounds.getMinX(), layerBounds.getMaxX());
+            var newY = validateCoordinate((newDirection.getY() * sniffDistance) + currentPosition.getY(), layerBounds.getMinY(), layerBounds.getMaxY());
+            environment.moveNodeToPosition(node, environment.makePosition(newX, newY));
+        }
+
         /*if (possibleDirections.isEmpty()){
             var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
             updateNodeDirection(node, newdir);
@@ -64,22 +83,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
             var newPosition = findBestPosition(possibleDirections, currentPosition, getCurrentNodeDirection(node));
             environment.moveNodeToPosition(node, newPosition);
         }*/
-        Optional<P> maxPosition = possibleDirections.stream().filter(pheromoneMap::containsKey)
-                .max(Comparator.comparingDouble(pheromoneMap::get));
 
-        if (maxPosition.isPresent()) {
-            var xx = maxPosition.get().getX() - pos.getX();
-            var yy = maxPosition.get().getY() - pos.getY();
-            //var pp = environment.makePosition(pos.getX()+xx, pos.getY()+yy);
-            var pp2 = environment.makePosition(currentPosition.getX()+xx, currentPosition.getY()+yy);
-            maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, pp2));
-        } else {
-            var newDirection = Directions.DEFAULT.getDirection(new Random().nextInt(8));
-            updateNodeDirection(node, newDirection);
-            environment.moveNodeToPosition(node, environment.makePosition(
-                    (newDirection.getX() * sniffDistance) + currentPosition.getX(),
-                    (newDirection.getY() * sniffDistance) + currentPosition.getY()));
-        }
         //maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
 
     }
@@ -100,6 +104,25 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
                 (newdir.getY()*sniffDistance) + nodePosition.getY());
     }
 
+    private P createNextPosition(final Double x, final Double y, final P currentPosition, final P pos, final Rectangle bounds) {
+        var xx = x - pos.getX();
+        var yy = y - pos.getY();
+
+        return environment.makePosition(
+                validateCoordinate(currentPosition.getX()+xx, bounds.getMinX(), bounds.getMaxX()),
+                validateCoordinate(currentPosition.getY()+yy, bounds.getMinY(), bounds.getMaxY()));
+    }
+
+    private Double validateCoordinate(final Double coord, final Double minBound, final Double maxBound){
+        if (coord <= maxBound && coord >= minBound){
+            return coord;
+        } else if (coord >= maxBound) {
+            return maxBound;
+        } else {
+            return minBound;
+        }
+    }
+
     @Override
     public Context getContext() {
         return Context.NEIGHBORHOOD; // it is local because it changes only the local molecule
@@ -107,10 +130,15 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
 
     private List<P> getNeighborhood(final P position) {
         var nodes = environment.getNodes().stream().map(environment::getPosition).toList();
+        var bounds = pheromoneLayer.getLayerBounds();
         final var x = position.getX();
         final var y = position.getY();
-        final double[] xs = DoubleStream.of(x - sniffDistance, x, x + sniffDistance).toArray();
-        final double[] ys = DoubleStream.of(y - sniffDistance, y, y + sniffDistance).toArray();
+        final double[] xs = DoubleStream.of(x - sniffDistance, x, x + sniffDistance)
+                .filter(value -> value >= bounds.getMinX() && value <= bounds.getMaxX())
+                .toArray();
+        final double[] ys = DoubleStream.of(y - sniffDistance, y, y + sniffDistance)
+                .filter(value -> value >= bounds.getMinY() && value <= bounds.getMaxY())
+                .toArray();
         return Arrays.stream(xs).boxed()
                 .flatMap(x1 -> Arrays.stream(ys).boxed().map(y1 -> environment.makePosition(x1, y1)))
                 .filter(p -> !p.equals(position))
