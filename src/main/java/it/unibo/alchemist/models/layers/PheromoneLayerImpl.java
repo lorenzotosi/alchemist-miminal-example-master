@@ -5,6 +5,7 @@ import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.models.actions.MoveNode;
 
+import java.awt.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,11 +20,12 @@ import java.util.Map;
 public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLayer<P> {
 
     private final Environment<Double, P> environment;
-
     private final Map<P, Double> pheromoneMap;
     private final Double step;
-    private final Double width;
-    private final Double height;
+    private final int width;
+    private final int height;
+    private final int startX;
+    private final int startY;
 
     private final Molecule molecule;
 
@@ -39,14 +41,16 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
      * @param step the step size of the area
      */
     public PheromoneLayerImpl(final Environment<Double, P> environment, final Molecule molecule,
-                              final Double startX, final Double startY,
-                              final Double width, final Double height, final Double step) {
+                              final int startX, final int startY,
+                              final int width, final int height, final Double step) {
         this.environment = environment;
         this.molecule = molecule;
         this.pheromoneMap = new HashMap<>();
         this.step = step;
         this.width = width;
         this.height = height;
+        this.startX = startX;
+        this.startY = startY;
 
         setupEnvironment(startX, startY);
     }
@@ -101,6 +105,10 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         return environment.makePosition(x, y);
     }
 
+    public Rectangle getLayerBounds(){
+        return new Rectangle(startX, startY, width, height);
+    }
+
     private double roundToClosestPosition(final double value, final double step, double maxValue) {
         int nSteps = (int) (value / step);
         double roundValue = nSteps * step;
@@ -117,7 +125,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         }
     }
 
-    private void setupEnvironment(final Double startX, final Double startY){
+    private void setupEnvironment(final int startX, final int startY){
         for (double x = startX; x < width - Math.abs(startX); x = x + step){
             for (double y = startY; y < height - Math.abs(startY); y = y + step){
                 pheromoneMap.put(environment.makePosition(x, y), 0.0);
