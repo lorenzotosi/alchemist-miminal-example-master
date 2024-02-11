@@ -1,6 +1,6 @@
 package it.unibo.alchemist.models.myEnums;
 
-public enum Directions {
+public enum Directions implements DirectionInfo {
     NORTH {
         @Override
         public Double getX() {
@@ -10,6 +10,16 @@ public enum Directions {
         @Override
         public Double getY() {
             return 1.0;
+        }
+
+        @Override
+        public Directions getMyLeft() {
+            return NORTH_WEST;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return NORTH_EAST;
         }
     },
     NORTH_EAST {
@@ -22,6 +32,16 @@ public enum Directions {
         public Double getY() {
             return 1.0;
         }
+
+        @Override
+        public Directions getMyLeft() {
+            return NORTH;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return EAST;
+        }
     },
     NORTH_WEST {
         @Override
@@ -32,6 +52,16 @@ public enum Directions {
         @Override
         public Double getY() {
             return 1.0;
+        }
+
+        @Override
+        public Directions getMyLeft() {
+            return WEST;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return NORTH;
         }
     },
     SOUTH {
@@ -44,6 +74,16 @@ public enum Directions {
         public Double getY() {
             return -1.0;
         }
+
+        @Override
+        public Directions getMyLeft() {
+            return SOUTH_EAST;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return SOUTH_WEST;
+        }
     },
     SOUTH_EAST {
         @Override
@@ -54,6 +94,16 @@ public enum Directions {
         @Override
         public Double getY() {
             return -1.0;
+        }
+
+        @Override
+        public Directions getMyLeft() {
+            return EAST;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return SOUTH;
         }
     },
     SOUTH_WEST {
@@ -66,6 +116,16 @@ public enum Directions {
         public Double getY() {
             return -1.0;
         }
+
+        @Override
+        public Directions getMyLeft() {
+            return SOUTH;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return WEST;
+        }
     },
     EAST {
         @Override
@@ -76,6 +136,16 @@ public enum Directions {
         @Override
         public Double getY() {
             return 0.0;
+        }
+
+        @Override
+        public Directions getMyLeft() {
+            return NORTH_EAST;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return SOUTH_WEST;
         }
     },
     WEST {
@@ -88,6 +158,16 @@ public enum Directions {
         public Double getY() {
             return 0.0;
         }
+
+        @Override
+        public Directions getMyLeft() {
+            return SOUTH_WEST;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return NORTH_WEST;
+        }
     },
     DEFAULT {
         @Override
@@ -98,6 +178,16 @@ public enum Directions {
         @Override
         public Double getY() {
             return 0.0;
+        }
+
+        @Override
+        public Directions getMyLeft() {
+            return null;
+        }
+
+        @Override
+        public Directions getMyRight() {
+            return null;
         }
     };
 
@@ -114,9 +204,14 @@ public enum Directions {
             default -> null;
         };
     }
-
+    @Override
     public abstract Double getX();
+    @Override
     public abstract Double getY();
+    @Override
+    public abstract Directions getMyLeft();
+    @Override
+    public abstract Directions getMyRight();
     public Double getCorrespondingAngle(final Double angle, final Directions dir){
         return angle + switch (dir){
             case NORTH -> 90.0;
