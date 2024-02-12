@@ -82,6 +82,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
      */
     private Directions getRandomDirection(final Directions nodeDirection){
         double random = new Random().nextDouble(0.0, 100.0);
+        double probability = 100* Math.abs(wiggleBias)/40;
         if (wiggleBias.intValue() == 0){
             if (random <= 50.0) {
                 return nodeDirection;
@@ -90,13 +91,17 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
             } else {
                 return nodeDirection.getMyRight();
             }
-        } else {
-            if (random <= 20.0) {
-                return nodeDirection;
-            } else if (random <= 60.0){
+        } else if (wiggleBias.intValue() <= 40 && wiggleBias.intValue() > 0) {
+            if (random <= probability) {
                 return nodeDirection.getMyLeft();
             } else {
+                return nodeDirection;
+            }
+        } else {
+            if (random <= probability) {
                 return nodeDirection.getMyRight();
+            } else {
+                return nodeDirection;
             }
         }
     }
