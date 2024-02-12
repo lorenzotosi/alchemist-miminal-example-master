@@ -73,20 +73,6 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
             var newY = validateCoordinate((newDirection.getY() * sniffDistance) + currentPosition.getY(), layerBounds.getMinY(), layerBounds.getMaxY());
             environment.moveNodeToPosition(node, environment.makePosition(newX, newY));
         }
-
-        /*if (possibleDirections.isEmpty()){
-            var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
-            updateNodeDirection(node, newdir);
-            environment.moveNodeToPosition(node, environment.makePosition(
-                    (newdir.getX() * sniffDistance) + currentPosition.getX(),
-                    (newdir.getY() * sniffDistance) + currentPosition.getY()));
-        } else {
-            var newPosition = findBestPosition(possibleDirections, currentPosition, getCurrentNodeDirection(node));
-            environment.moveNodeToPosition(node, newPosition);
-        }*/
-
-        //maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
-
     }
 
     private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
@@ -130,9 +116,13 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         if (coord <= maxBound && coord >= minBound){
             return coord;
         } else if (coord >= maxBound) {
-            return maxBound;
+            double distanceBeyondMax = coord - maxBound;
+            double bouncedCoord = minBound + distanceBeyondMax;
+            return Math.min(bouncedCoord, maxBound);
         } else {
-            return minBound;
+            double distanceBeyondMin = minBound - coord;
+            double bouncedCoord = maxBound - distanceBeyondMin;
+            return Math.max(bouncedCoord, minBound);
         }
     }
 
