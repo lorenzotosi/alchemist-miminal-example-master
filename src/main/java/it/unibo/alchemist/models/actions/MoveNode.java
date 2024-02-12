@@ -58,50 +58,86 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
 
-        Optional<P> maxPosition = possibleDirections.stream().filter(pheromoneMap::containsKey)
-                .max(Comparator.comparingDouble(pheromoneMap::get));
+        Optional<P> maxPosition = findBestPosition(possibleDirections, currentPosition, getCurrentNodeDirection(node));
 
         if (maxPosition.isPresent() && pheromoneMap.get(pos) > sniffThreshold) {
+            updateNodeDirection(node, getDirectionFromCoordinates(pos.getX(), pos.getY(), maxPosition.get().getX(), maxPosition.get().getY()));
             var nextPosition = createNextPosition(maxPosition.get().getX(), maxPosition.get().getY(),
                     currentPosition, pos, layerBounds);
             environment.moveNodeToPosition(node, nextPosition);
         } else {
-            var newDirection = Directions.DEFAULT.getDirection(new Random().nextInt(8));
+            var newDirection = getRandomDirection(getCurrentNodeDirection(node));
             updateNodeDirection(node, newDirection);
             var newX = validateCoordinate((newDirection.getX() * sniffDistance) + currentPosition.getX(), layerBounds.getMinX(), layerBounds.getMaxX());
             var newY = validateCoordinate((newDirection.getY() * sniffDistance) + currentPosition.getY(), layerBounds.getMinY(), layerBounds.getMaxY());
             environment.moveNodeToPosition(node, environment.makePosition(newX, newY));
         }
-
-        /*if (possibleDirections.isEmpty()){
-            var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
-            updateNodeDirection(node, newdir);
-            environment.moveNodeToPosition(node, environment.makePosition(
-                    (newdir.getX() * sniffDistance) + currentPosition.getX(),
-                    (newdir.getY() * sniffDistance) + currentPosition.getY()));
-        } else {
-            var newPosition = findBestPosition(possibleDirections, currentPosition, getCurrentNodeDirection(node));
-            environment.moveNodeToPosition(node, newPosition);
-        }*/
-
-        //maxPosition.ifPresent(p -> environment.moveNodeToPosition(node, p));
-
     }
 
-    private P findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
-        var directionValue = environment.makePosition((direction.getX()*sniffDistance)+nodePosition.getX(),
-                (direction.getY()*sniffDistance) + nodePosition.getY());
-
-        var possiblePositions = getPositionsInAngle(neighborhoodPositions, directionValue, nodePosition);
-        Optional<P> maxPosition = possiblePositions.stream().filter(pheromoneMap::containsKey)
-                .max(Comparator.comparingDouble(pheromoneMap::get));
-        if (maxPosition.isPresent()){
-            return environment.makePosition(maxPosition.get().getX(), maxPosition.get().getY());
+    /**
+     * wigglebias 0-100,
+     * 0 = 50% dritto, 25 destra e sinistra
+     * 1-50 =
+     * @param nodeDirection
+     * @return
+     */
+    private Directions getRandomDirection(final Directions nodeDirection){
+        double random = new Random().nextDouble(0.0, 100.0);
+        double probability = 100* Math.abs(wiggleBias)/40;
+        if (wiggleBias.intValue() == 0){
+            if (random <= 50.0) {
+                return nodeDirection;
+            } else if (random <= 75.0){
+                return nodeDirection.getMyLeft();
+            } else {
+                return nodeDirection.getMyRight();
+            }
+        } else if (wiggleBias.intValue() <= 40 && wiggleBias.intValue() > 0) {
+            if (random <= probability) {
+                return nodeDirection.getMyLeft();
+            } else {
+                return nodeDirection;
+            }
+        } else {
+            if (random <= probability) {
+                return nodeDirection.getMyRight();
+            } else {
+                return nodeDirection;
+            }
         }
-        var newdir = Directions.DEFAULT.getDirection(new Random().nextInt(8));
-        updateNodeDirection(node, newdir);
-        return environment.makePosition((newdir.getX()*sniffDistance)+nodePosition.getX(),
-                (newdir.getY()*sniffDistance) + nodePosition.getY());
+    }
+
+    private Directions getDirectionFromCoordinates(double startX, double startY, double endX, double endY) {
+        double diffX = endX - startX;
+        double diffY = endY - startY;
+
+        for (Directions dir : Directions.values()) {
+            if (dir.getX() * sniffDistance == diffX && dir.getY() * sniffDistance == diffY) {
+                return dir;
+            }
+        }
+        return Directions.DEFAULT.getDirection(new Random().nextInt(8));
+    }
+
+    private Optional<P> findBestPosition(final List<P> neighborhoodPositions, final P nodePosition, final Directions direction){
+        var forwardPosition = getPositionFromDirection(nodePosition, direction);
+
+        var possiblePositions = getPositionsInAngle(neighborhoodPositions, forwardPosition, nodePosition);
+        return possiblePositions.stream().filter(pheromoneMap::containsKey)
+                .max(Comparator.comparingDouble(pheromoneMap::get));
+    }
+
+    private List<P> getPositionsInAngle(final List<P> neighborhoodPositions, final P forwardPosition, final P nodePosition) {
+        List<P> possiblePositions = new ArrayList<>(List.of(forwardPosition,
+                getPositionFromDirection(nodePosition, getCurrentNodeDirection(node).getMyRight()),
+                getPositionFromDirection(nodePosition, getCurrentNodeDirection(node).getMyLeft())));
+        possiblePositions.retainAll(neighborhoodPositions);
+        return possiblePositions;
+    }
+
+    private P getPositionFromDirection(final P nodePosition, final Directions nodeDirection){
+        return environment.makePosition((nodeDirection.getX()*sniffDistance)+nodePosition.getX(),
+                (nodeDirection.getY()*sniffDistance) + nodePosition.getY());
     }
 
     private P createNextPosition(final Double x, final Double y, final P currentPosition, final P pos, final Rectangle bounds) {
@@ -117,9 +153,13 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         if (coord <= maxBound && coord >= minBound){
             return coord;
         } else if (coord >= maxBound) {
-            return maxBound;
+            double distanceBeyondMax = coord - maxBound;
+            double bouncedCoord = minBound + distanceBeyondMax;
+            return Math.min(bouncedCoord, maxBound);
         } else {
-            return minBound;
+            double distanceBeyondMin = minBound - coord;
+            double bouncedCoord = maxBound - distanceBeyondMin;
+            return Math.max(bouncedCoord, minBound);
         }
     }
 
@@ -149,41 +189,6 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private Directions getCurrentNodeDirection(final Node<Double> node){
         var nodeProperty = (NodeWithDirection<Double>) node.getProperties().get(node.getProperties().size()-1);
         return nodeProperty.getDirection();
-    }
-
-    /**
-     *
-     * @param allPositions
-     * @param forwardPosition davanti
-     * @param center il mio nodo
-     * @return
-     */
-    private List<P> getPositionsInAngle(List<P> allPositions, P forwardPosition, P center) {
-        List<P> positionsInAngle = new ArrayList<>();
-        for (P other : allPositions) {
-            if (!forwardPosition.equals(other)) {
-                double a = calculateAngle(center.getX(), center.getY(), forwardPosition.getX(), forwardPosition.getY(), other.getX(), other.getY());
-                if (Math.abs(a) <= wiggleAngle || Math.abs(a) >= 360 - wiggleAngle) {
-                    positionsInAngle.add(other);
-                }
-            }
-        }
-        return positionsInAngle;
-    }
-
-    private double calculateAngle(double centerX, double centerY, double x1, double y1, double x2, double y2) {
-        double angle1 = Math.atan2(y1 - centerY, x1 - centerX);
-        double angle2 = Math.atan2(y2 - centerY, x2 - centerX);
-
-        double angle = angle2 - angle1;
-
-        if (angle < -Math.PI) {
-            angle += 2 * Math.PI;
-        } else if (angle > Math.PI) {
-            angle -= 2 * Math.PI;
-        }
-
-        return Math.toDegrees(angle);
     }
 
     private void updateNodeDirection(final Node<Double> node, final Directions directions){
