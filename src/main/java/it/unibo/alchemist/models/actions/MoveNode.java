@@ -62,6 +62,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
                 .max(Comparator.comparingDouble(pheromoneMap::get));
 
         if (maxPosition.isPresent() && pheromoneMap.get(pos) > sniffThreshold) {
+            updateNodeDirection(node, getDirectionFromCoordinates(pos.getX(), pos.getY(), maxPosition.get().getX(), maxPosition.get().getY()));
             var nextPosition = createNextPosition(maxPosition.get().getX(), maxPosition.get().getY(),
                     currentPosition, pos, layerBounds);
             environment.moveNodeToPosition(node, nextPosition);
@@ -102,6 +103,18 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         updateNodeDirection(node, newdir);
         return environment.makePosition((newdir.getX()*sniffDistance)+nodePosition.getX(),
                 (newdir.getY()*sniffDistance) + nodePosition.getY());
+    }
+
+    public Directions getDirectionFromCoordinates(double startX, double startY, double endX, double endY) {
+        double diffX = endX - startX;
+        double diffY = endY - startY;
+
+        for (Directions dir : Directions.values()) {
+            if (dir.getX() * sniffDistance == diffX && dir.getY() * sniffDistance == diffY) {
+                return dir;
+            }
+        }
+        return Directions.DEFAULT.getDirection(new Random().nextInt(8));
     }
 
     private P createNextPosition(final Double x, final Double y, final P currentPosition, final P pos, final Rectangle bounds) {
