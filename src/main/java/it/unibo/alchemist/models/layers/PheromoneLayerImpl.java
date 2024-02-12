@@ -126,8 +126,8 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     }
 
     private void setupEnvironment(final int startX, final int startY){
-        for (double x = startX; x < width - Math.abs(startX); x = x + step){
-            for (double y = startY; y < height - Math.abs(startY); y = y + step){
+        for (double x = startX; x <= width - Math.abs(startX); x = x + step){
+            for (double y = startY; y <= height - Math.abs(startY); y = y + step){
                 pheromoneMap.put(environment.makePosition(x, y), 0.0);
             }
         }

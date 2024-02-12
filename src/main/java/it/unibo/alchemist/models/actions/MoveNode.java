@@ -61,7 +61,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         Optional<P> maxPosition = possibleDirections.stream().filter(pheromoneMap::containsKey)
                 .max(Comparator.comparingDouble(pheromoneMap::get));
 
-        if (maxPosition.isPresent()) {
+        if (maxPosition.isPresent() && pheromoneMap.get(pos) > sniffThreshold) {
             var nextPosition = createNextPosition(maxPosition.get().getX(), maxPosition.get().getY(),
                     currentPosition, pos, layerBounds);
             environment.moveNodeToPosition(node, nextPosition);
