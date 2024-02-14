@@ -12,7 +12,7 @@ import java.util.Map;
 /**
  * This class represents a layer of pheromones in the environment.
  * Pheromone values are stored in a map, where each position is associated with a pheromone value.
- * The map's punctiform positions rapresent the starting point of an area in which the nodes can deposit a pheromone.
+ * The map's punctilio positions represent the starting point of an area in which the nodes can deposit a pheromone.
  * Implementation of the {@link PheromoneLayer} interface.
  *
  * @param <P> the type of position in the environment
@@ -105,6 +105,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         return environment.makePosition(x, y);
     }
 
+    @Override
     public Rectangle getLayerBounds(){
         return new Rectangle(startX, startY, width, height);
     }

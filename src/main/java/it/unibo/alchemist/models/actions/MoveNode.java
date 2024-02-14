@@ -75,8 +75,13 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         }
     }
 
+    @Override
+    public Context getContext() {
+        return Context.NEIGHBORHOOD;
+    }
+
     /**
-     * wigglebias 0-100, se entro 50 vai a sinistra, senno destra
+     * wigglebias -40, 0, 40,
      * @param nodeDirection
      * @return
      */
@@ -139,11 +144,6 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
             double bouncedCoord = maxBound - distanceBeyondMin;
             return Math.max(bouncedCoord, minBound);
         }
-    }
-
-    @Override
-    public Context getContext() {
-        return Context.NEIGHBORHOOD; // it is local because it changes only the local molecule
     }
 
     private List<P> getNeighborhood(final P position) {

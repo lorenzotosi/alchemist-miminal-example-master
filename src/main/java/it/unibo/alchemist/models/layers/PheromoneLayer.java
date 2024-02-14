@@ -3,6 +3,8 @@ package it.unibo.alchemist.models.layers;
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Position2D;
 
+import java.awt.*;
+
 
 /**
  * Represents a pheromone layer in a grid-based model.
@@ -26,4 +28,6 @@ public interface PheromoneLayer<P extends Position2D<P>> extends Layer<Double, P
      * @param value The pheromone value associated to the grid position
      */
     void evaporate(P p, Double value);
+
+    Rectangle getLayerBounds();
 }
