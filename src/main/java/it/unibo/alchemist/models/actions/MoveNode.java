@@ -18,9 +18,9 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     private final Environment<Double, P> environment;
     private final PheromoneLayerImpl<P> pheromoneLayer;
     private final Double sniffDistance;
-    private final Double wiggleAngle;
+    //private final Double wiggleAngle;
     private final Double wiggleBias;
-    private final Double sniffAngle;
+    //private final Double sniffAngle;
     private final Double sniffThreshold;
     private final Molecule molecule;
     private final Map<P, Double> pheromoneMap;
@@ -29,32 +29,33 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
 
 
     public MoveNode(final Node<Double> node, final Environment<Double, P> environment, final double distance,
-                    final Molecule molecule, final Double wiggleAngle, final Double wiggleBias,
-                    final Double sniffAngle, final Double sniffThreshold) {
+                    final Molecule molecule, /*final Double wiggleAngle,*/ final Double wiggleBias,
+                    /*final Double sniffAngle,*/ final Double sniffThreshold) {
         super(node);
         this.node = node;
         this.environment = environment;
         this.sniffDistance = distance;
         this.molecule = molecule;
-        this.wiggleAngle = wiggleAngle;
+        //this.wiggleAngle = wiggleAngle;
         this.wiggleBias = wiggleBias;
-        this.sniffAngle = sniffAngle;
+        //this.sniffAngle = sniffAngle;
         this.sniffThreshold = sniffThreshold;
         this.pheromoneLayer = (PheromoneLayerImpl<P>) environment.getLayer(molecule).get();
-        this.pheromoneMap = pheromoneLayer.getMap();
+        this.pheromoneMap = pheromoneLayer.getPheromoneMap();
         this.layerBounds = pheromoneLayer.getLayerBounds();
     }
 
     @Override
     public Action<Double> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new MoveNode<>(node, environment, sniffDistance, molecule, wiggleAngle, wiggleBias, sniffAngle, sniffThreshold);
+        return new MoveNode<>(node, environment, sniffDistance, molecule,
+                /*wiggleAngle,*/ wiggleBias, /*sniffAngle,*/ sniffThreshold);
     }
 
     @Override
     public void execute() {
-        var currentPosition = environment.getPosition(node);
-        var pos = pheromoneLayer.adaptPosition(currentPosition);
-        var possibleDirections = getNeighborhood(pos).stream()
+        P currentPosition = environment.getPosition(node);
+        P pos = pheromoneLayer.adaptPosition(currentPosition);
+        List<P> possibleDirections = getNeighborhood(pos).stream()
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
 
@@ -63,14 +64,14 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
 
         if (maxPosition.isPresent() && pheromoneMap.get(pos) > sniffThreshold) {
             updateNodeDirection(node, getDirectionFromCoordinates(pos.getX(), pos.getY(), maxPosition.get().getX(), maxPosition.get().getY()));
-            var nextPosition = createNextPosition(maxPosition.get().getX(), maxPosition.get().getY(),
+            P nextPosition = createNextPosition(maxPosition.get().getX(), maxPosition.get().getY(),
                     currentPosition, pos, layerBounds);
             environment.moveNodeToPosition(node, nextPosition);
         } else {
-            var newDirection = getRandomDirection(getCurrentNodeDirection(node));
+            Directions newDirection = getRandomDirection(getCurrentNodeDirection(node));
             updateNodeDirection(node, newDirection);
-            var newX = validateCoordinate((newDirection.getX() * sniffDistance) + currentPosition.getX(), layerBounds.getMinX(), layerBounds.getMaxX());
-            var newY = validateCoordinate((newDirection.getY() * sniffDistance) + currentPosition.getY(), layerBounds.getMinY(), layerBounds.getMaxY());
+            Double newX = validateCoordinate((newDirection.getX() * sniffDistance) + currentPosition.getX(), layerBounds.getMinX(), layerBounds.getMaxX());
+            Double newY = validateCoordinate((newDirection.getY() * sniffDistance) + currentPosition.getY(), layerBounds.getMinY(), layerBounds.getMaxY());
             environment.moveNodeToPosition(node, environment.makePosition(newX, newY));
         }
     }

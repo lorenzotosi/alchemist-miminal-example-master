@@ -50,7 +50,7 @@ _actions:
       time-distribution: 1
       actions:
         - type: MoveNode
-          parameters: [*distance, *moleculeName, *wa, *wb, *sa, *st]
+          parameters: [*distance, *moleculeName, *wb, *st]
         - type: NodeInfo
           parameters:
 
