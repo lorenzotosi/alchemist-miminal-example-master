@@ -3,7 +3,7 @@ package it.unibo.alchemist.models.globalactions;
 import it.unibo.alchemist.model.GlobalReaction;
 import it.unibo.alchemist.model.Position;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
+import it.unibo.alchemist.models.layer.PheromoneLayerImpl;
 
 /**
  * Represents a global reaction that acts on a PheromoneLayerImpl.

@@ -2,7 +2,7 @@ package it.unibo.alchemist.models.actions;
 
 import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
-import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
+import it.unibo.alchemist.models.layer.PheromoneLayerImpl;
 import it.unibo.alchemist.models.myEnums.Directions;
 import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
 

@@ -1,9 +1,8 @@
-package it.unibo.alchemist.models.layers;
+package it.unibo.alchemist.models.layer;
 
 import it.unibo.alchemist.model.Environment;
 import it.unibo.alchemist.model.Molecule;
 import it.unibo.alchemist.model.Position2D;
-import it.unibo.alchemist.models.actions.MoveNode;
 
 import java.awt.*;
 import java.util.Collections;
@@ -53,7 +52,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         this.startX = startX;
         this.startY = startY;
 
-        setupEnvironment(startX, startY);
+        setupEnvironment();
     }
     
     @Override
@@ -61,8 +60,6 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         var mapPosition = adaptPosition(p);
         if(pheromoneMap.containsKey(mapPosition))
             pheromoneMap.put(mapPosition, (value + pheromoneMap.get(mapPosition)));
-        //else
-            //map.put(mapPosition, value);
     }
 
     @Override
@@ -126,7 +123,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
         }
     }
 
-    private void setupEnvironment(final int startX, final int startY){
+    private void setupEnvironment(){
         for (double x = startX; x <= width - Math.abs(startX); x = x + step){
             for (double y = startY; y <= height - Math.abs(startY); y = y + step){
                 pheromoneMap.put(environment.makePosition(x, y), 0.0);

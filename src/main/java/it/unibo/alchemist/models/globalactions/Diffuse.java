@@ -1,7 +1,7 @@
 package it.unibo.alchemist.models.globalactions;
 
 import it.unibo.alchemist.model.*;
-import it.unibo.alchemist.models.layers.PheromoneLayerImpl;
+import it.unibo.alchemist.models.layer.PheromoneLayerImpl;
 
 import java.util.Arrays;
 import java.util.HashMap;

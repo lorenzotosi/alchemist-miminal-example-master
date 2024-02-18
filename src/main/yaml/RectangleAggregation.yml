@@ -51,13 +51,13 @@ _actions:
       actions:
         - type: MoveNode
           parameters: [*distance, *moleculeName, *wa, *wb, *sa, *st]
-        - type: ReadLayer
+        - type: NodeInfo
           parameters:
 
 
 deployments:
   type: Rectangle
-  parameters: [400, *xS, *yS, *width, *height]
+  parameters: [50, *xS, *yS, *width, *height]
   properties:
     - type: NodeWithDirection
   contents:

@@ -1,4 +1,4 @@
-package it.unibo.alchemist.models.layers;
+package it.unibo.alchemist.models.layer;
 
 import it.unibo.alchemist.model.Layer;
 import it.unibo.alchemist.model.Position2D;
