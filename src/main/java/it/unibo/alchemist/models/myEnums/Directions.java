@@ -212,17 +212,4 @@ public enum Directions implements DirectionInfo {
     public abstract Directions getMyLeft();
     @Override
     public abstract Directions getMyRight();
-    public Double getCorrespondingAngle(final Double angle, final Directions dir){
-        return angle + switch (dir){
-            case NORTH -> 90.0;
-            case SOUTH -> 270.0;
-            case EAST ->0.0;
-            case WEST ->180.0;
-            case NORTH_EAST ->45.0 ;
-            case NORTH_WEST ->135.0;
-            case SOUTH_EAST -> 315;
-            case SOUTH_WEST ->225;
-            default -> 0.0;
-        };
-    }
 }

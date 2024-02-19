@@ -6,7 +6,7 @@ variables:
   wiggleAngle: &wa 45.0
   wiggleBias: &wb 0.0
   sniffAngle: &sa 45.0
-  sniffThreshold: &st 30.0
+  sniffThreshold: &st 3.0
   customDiffusionThreshold: &dt 1.0
   xStart : &xS -10
   yStart : &yS -10
@@ -31,7 +31,7 @@ environment:
         type: DiracComb
         parameters: [0, 1]
       type: Evaporate
-      parameters: [*moleculeName, 0.90]
+      parameters: [*moleculeName, 0.65]
     - time-distribution:
         type: DiracComb
         parameters: [0, 1]
@@ -57,7 +57,7 @@ _actions:
 
 deployments:
   type: Rectangle
-  parameters: [50, *xS, *yS, *width, *height]
+  parameters: [400, *xS, *yS, *width, *height]
   properties:
     - type: NodeWithDirection
   contents:

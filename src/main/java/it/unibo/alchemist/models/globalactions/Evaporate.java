@@ -38,7 +38,6 @@ public class Evaporate<T, P extends Position<P> & Position2D<P>> extends Abstrac
         var pheromoneMap = phLayer.getPheromoneMap();
         pheromoneMap.forEach((key, value) -> {
             if (value > 0) {
-                //pheromoneMap.put(key, value * evaporationValue);
                 phLayer.evaporate(key, value * evaporationValue);
             }
         });
