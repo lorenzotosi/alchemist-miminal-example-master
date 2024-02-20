@@ -2,45 +2,40 @@ incarnation: protelis
 
 variables:
   moleculeName: &moleculeName pheromone
-  neighborhoodDistance: &distance 0.25
+  neighborhoodDistance: &distance 0.5
   wiggleBias: &wb 0.0
-  sniffThreshold: &st 1.5
-  customDiffusionThreshold: &dt 5.0
-  xStart: &xS -10
-  yStart: &yS -10
-  width: &width 20
-  height: &height 20
+  sniffThreshold: &st 4
+  customDiffusionThreshold: &dt 1.0
+  xStart : &xS -15
+  yStart : &yS -15
+  width : &width 30
+  height: &height 30
 
-
-network-model:
-  type: ConnectWithinDistance
-  parameters:
-    - *distance
 
 environment:
   type: Continuous2DEnvironment
   global-programs:
     - time-distribution:
         type: DiracComb
-        parameters: [ 0, 1 ]
+        parameters: [0, 1]
       type: Deposit
-      parameters: [ *moleculeName, 1.0 ]
+      parameters: [*moleculeName, 1]
     - time-distribution:
         type: DiracComb
-        parameters: [ 0, 1 ]
+        parameters: [0, 1]
       type: Evaporate
-      parameters: [ *moleculeName, 0.6]
+      parameters: [*moleculeName, 0.6]
     - time-distribution:
         type: DiracComb
-        parameters: [ 0, 1 ]
+        parameters: [0, 1]
       type: Diffuse
-      parameters: [ *moleculeName, *dt, *distance, 0.5]
+      parameters: [*moleculeName, *dt, *distance, 0.0625]
 
 
 
 seeds:
   scenario: 0
-  simulation: 2
+  simulation: 0
 
 _actions:
   all: &read
@@ -48,14 +43,14 @@ _actions:
       time-distribution: 1
       actions:
         - type: MoveNode
-          parameters: [ *distance, *moleculeName, *wb, *st ]
+          parameters: [*distance, *moleculeName, *wb, *st]
         - type: NodeInfo
           parameters:
 
 
 deployments:
-  type: Grid
-  parameters: [ -10, -10, 10, 10, 1, 1 ]
+  type: Rectangle
+  parameters: [500, *xS, *yS, *width, *height]
   properties:
     - type: DirectionProperty
   contents:
@@ -67,9 +62,9 @@ deployments:
 
 layers:
   - type: PheromoneLayerImpl
-    parameters: [ *moleculeName, *xS, *yS, *width, *height, *distance ]
+    parameters: [*moleculeName, *xS, *yS, *width, *height, *distance]
     molecule: *moleculeName
 
 terminate:
   - type: AfterTime
-    parameters: 2000
+    parameters: 300

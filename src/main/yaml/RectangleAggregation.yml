@@ -34,8 +34,8 @@ environment:
 
 
 seeds:
-  scenario: 0
-  simulation: 0
+  scenario: 1
+  simulation: 1
 
 _actions:
   all: &read
@@ -67,4 +67,4 @@ layers:
 
 terminate:
   - type: AfterTime
-    parameters: 2000
+    parameters: 305
