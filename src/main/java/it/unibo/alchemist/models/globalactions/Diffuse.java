@@ -56,13 +56,11 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
             if (pValue > customDiffusionThreshold)
                 getNeighborhood(nPos).forEach(x -> phLayer.deposit(x, pValue * diffusionValue));
         });*/
-        Map<P, Double> dummyMap = new HashMap<>();
         pheromoneMap.forEach((k, v) -> {
             if (v > customDiffusionThreshold){
-                getNeighborhood(k).forEach(x -> dummyMap.put(k, v*diffusionValue));
+                getNeighborhood(k).forEach(x -> phLayer.deposit(k, v * diffusionValue));
             }
         });
-        dummyMap.forEach(phLayer::deposit);
     }
 
     /**

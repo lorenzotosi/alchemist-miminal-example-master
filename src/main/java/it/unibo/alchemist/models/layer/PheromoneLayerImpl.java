@@ -58,7 +58,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     @Override
     public void deposit(final P p, final Double value){
         var mapPosition = adaptPosition(p);
-        if(pheromoneMap.containsKey(mapPosition) && pheromoneMap.get(mapPosition) <= 10.0)
+        if(pheromoneMap.containsKey(mapPosition) && pheromoneMap.get(mapPosition) <= 100.0)
             pheromoneMap.put(mapPosition, (value + pheromoneMap.get(mapPosition)));
     }
 

@@ -2,22 +2,17 @@ incarnation: protelis
 
 variables:
   moleculeName: &moleculeName pheromone
-  neighborhoodDistance: &distance 0.25
+  neighborhoodDistance: &distance 0.5
   wiggleAngle: &wa 45.0
   wiggleBias: &wb 0.0
   sniffAngle: &sa 45.0
-  sniffThreshold: &st 8
-  customDiffusionThreshold: &dt 4
-  xStart : &xS -10
-  yStart : &yS -10
-  width : &width 20
-  height: &height 20
+  sniffThreshold: &st 1.5
+  customDiffusionThreshold: &dt 5.0
+  xStart : &xS -15
+  yStart : &yS -15
+  width : &width 30
+  height: &height 30
 
-
-network-model:
-  type: ConnectWithinDistance
-  parameters:
-    - *distance
 
 environment:
   type: Continuous2DEnvironment
@@ -26,23 +21,23 @@ environment:
         type: DiracComb
         parameters: [0, 1]
       type: Deposit
-      parameters: [*moleculeName, 2]
+      parameters: [*moleculeName, 1]
     - time-distribution:
         type: DiracComb
         parameters: [0, 1]
       type: Evaporate
-      parameters: [*moleculeName, 0.9]
+      parameters: [*moleculeName, 0.6]
     - time-distribution:
         type: DiracComb
         parameters: [0, 1]
       type: Diffuse
-      parameters: [*moleculeName, *dt, *distance, 1]
+      parameters: [*moleculeName, *dt, *distance, 0.5]
 
 
 
 seeds:
-  scenario: 1
-  simulation: 1
+  scenario: 0
+  simulation: 0
 
 _actions:
   all: &read
@@ -57,7 +52,7 @@ _actions:
 
 deployments:
   type: Rectangle
-  parameters: [400, *xS, *yS, *width, *height]
+  parameters: [500, *xS, *yS, *width, *height]
   properties:
     - type: DirectionProperty
   contents:
