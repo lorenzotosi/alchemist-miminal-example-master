@@ -3,9 +3,7 @@ incarnation: protelis
 variables:
   moleculeName: &moleculeName pheromone
   neighborhoodDistance: &distance 0.5
-  wiggleAngle: &wa 45.0
   wiggleBias: &wb 0.0
-  sniffAngle: &sa 45.0
   sniffThreshold: &st 1.5
   customDiffusionThreshold: &dt 5.0
   xStart : &xS -15
