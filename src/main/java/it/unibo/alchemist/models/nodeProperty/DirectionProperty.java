@@ -13,7 +13,7 @@ import java.util.Random;
  *
  * @param <T> the type of the node property value
  */
-public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
+public class DirectionProperty<T> extends AbstractNodeProperty<T> {
 
     private Directions direction;
 
@@ -22,7 +22,7 @@ public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
      *
      * @param node the node
      */
-    public NodeWithDirection(@NotNull Node<T> node) {
+    public DirectionProperty(@NotNull Node<T> node) {
         super(node);
         this.direction = Directions.DEFAULT.getDirection(new Random().nextInt(8));
     }
@@ -30,7 +30,7 @@ public class NodeWithDirection<T> extends AbstractNodeProperty<T> {
     @NotNull
     @Override
     public NodeProperty<T> cloneOnNewNode(@NotNull Node<T> node) {
-        return new NodeWithDirection<>(node);
+        return new DirectionProperty<>(node);
     }
 
     /**

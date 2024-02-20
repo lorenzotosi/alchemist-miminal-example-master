@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.models.layer.PheromoneLayerImpl;
 import it.unibo.alchemist.models.myEnums.Directions;
-import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
+import it.unibo.alchemist.models.nodeProperty.DirectionProperty;
 
 import java.awt.*;
 import java.util.*;
@@ -166,12 +166,12 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     }
 
     private Directions getCurrentNodeDirection(final Node<Double> node){
-        var nodeProperty = (NodeWithDirection<Double>) node.getProperties().get(node.getProperties().size()-1);
+        var nodeProperty = (DirectionProperty<Double>) node.getProperties().get(node.getProperties().size()-1);
         return nodeProperty.getDirection();
     }
 
     private void updateNodeDirection(final Node<Double> node, final Directions directions){
-        NodeWithDirection<Double> pNodeWithDirection = (NodeWithDirection<Double>) node.getProperties().get(1);
+        DirectionProperty<Double> pNodeWithDirection = (DirectionProperty<Double>) node.getProperties().get(1);
         pNodeWithDirection.setDirection(directions, node);
     }
 }

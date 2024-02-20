@@ -2,12 +2,16 @@ incarnation: protelis
 
 variables:
   moleculeName: &moleculeName pheromone
-  neighborhoodDistance: &distance 1
-  wiggleAngle: &wa 46.0
+  neighborhoodDistance: &distance 0.25
+  wiggleAngle: &wa 45.0
   wiggleBias: &wb 0.0
   sniffAngle: &sa 45.0
-  sniffThreshold: &st 0.0
-  customDiffusionThreshold: &dt 0.0
+  sniffThreshold: &st 3.0
+  customDiffusionThreshold: &dt 1.0
+  xStart: &xS -10
+  yStart: &yS -10
+  width: &width 20
+  height: &height 20
 
 
 network-model:
@@ -18,21 +22,21 @@ network-model:
 environment:
   type: Continuous2DEnvironment
   global-programs:
-  - time-distribution:
-      type: DiracComb
-      parameters: [0, 1]
-    type: Deposit
-    parameters: [*moleculeName, 1.0]
-  - time-distribution:
-      type: DiracComb
-      parameters: [0, 1]
-    type: Evaporate
-    parameters: [*moleculeName, 0.70]
-  - time-distribution:
-      type: DiracComb
-      parameters: [0, 1]
-    type: Diffuse
-    parameters: [*moleculeName, *dt, *distance, 0.5]
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 0, 1 ]
+      type: Deposit
+      parameters: [ *moleculeName, 1.0 ]
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 0, 1 ]
+      type: Evaporate
+      parameters: [ *moleculeName, 0.65 ]
+    - time-distribution:
+        type: DiracComb
+        parameters: [ 0, 1 ]
+      type: Diffuse
+      parameters: [ *moleculeName, *dt, *distance, 0.3 ]
 
 
 
@@ -46,18 +50,16 @@ _actions:
       time-distribution: 1
       actions:
         - type: MoveNode
-          parameters: [*distance, *moleculeName, *wa, *wb, *sa, *st]
-        - type: ReadLayer
+          parameters: [ *distance, *moleculeName, *wb, *st ]
+        - type: NodeInfo
           parameters:
 
 
 deployments:
-  #type: Rectangle
-  #parameters: [10, 0, 0, 1, 1]
   type: Grid
-  parameters: [ -10, -10, 10, 10, 1, 1]
+  parameters: [ -10, -10, 10, 10, 1, 1 ]
   properties:
-    - type: NodeWithDirection
+    - type: DirectionProperty
   contents:
     molecule: *moleculeName
     concentration: 1
@@ -66,8 +68,8 @@ deployments:
 
 
 layers:
-  - type: PheromoneLayer
-    parameters: [*moleculeName]
+  - type: PheromoneLayerImpl
+    parameters: [ *moleculeName, *xS, *yS, *width, *height, *distance ]
     molecule: *moleculeName
 
 terminate:

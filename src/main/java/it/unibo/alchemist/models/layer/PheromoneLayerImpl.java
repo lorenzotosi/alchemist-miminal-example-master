@@ -65,7 +65,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     @Override
     public void evaporate(final P p, final Double value){
         if(pheromoneMap.containsKey(p))
-            pheromoneMap.put(p, value>= 0 ? value : 0.0);
+            pheromoneMap.put(p, value >= 0.0 ? value : 0.0);
     }
 
     /**

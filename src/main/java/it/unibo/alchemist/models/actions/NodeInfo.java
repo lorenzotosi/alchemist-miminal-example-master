@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.*;
 import it.unibo.alchemist.model.actions.AbstractAction;
 import it.unibo.alchemist.model.molecules.SimpleMolecule;
 import it.unibo.alchemist.models.layer.PheromoneLayerImpl;
-import it.unibo.alchemist.models.nodeProperty.NodeWithDirection;
+import it.unibo.alchemist.models.nodeProperty.DirectionProperty;
 
 import java.util.Optional;
 
@@ -31,7 +31,7 @@ public class NodeInfo<T, P extends Position<P> & Position2D<P>> extends Abstract
         if (OptPhL.isPresent()){
             PheromoneLayerImpl<P> layer = (PheromoneLayerImpl<P>) OptPhL.get();
             var pos = environment.getPosition(node);
-            var x = (NodeWithDirection<T>) node.getProperties().get(1);
+            var x = (DirectionProperty<T>) node.getProperties().get(1);
             node.setConcentration(new SimpleMolecule("PheromoneValue"), (T) layer.getValue(pos));
             node.setConcentration(new SimpleMolecule("Direction"), (T) x.getDirection());
         }
