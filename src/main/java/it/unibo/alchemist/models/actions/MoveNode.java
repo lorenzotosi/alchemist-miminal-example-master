@@ -41,7 +41,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
         this.sniffAngle = sniffAngle;
         this.sniffThreshold = sniffThreshold;
         this.pheromoneLayer = (PheromoneLayerImpl<P>) environment.getLayer(molecule).get();
-        this.pheromoneMap = pheromoneLayer.getMap();
+        this.pheromoneMap = pheromoneLayer.getPheromoneMap();
         this.layerBounds = pheromoneLayer.getLayerBounds();
     }
 
@@ -53,12 +53,14 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
     @Override
     public void execute() {
         var currentPosition = environment.getPosition(node);
+        //sono sulla patch
         var pos = pheromoneLayer.adaptPosition(currentPosition);
+        //possibili patch su cui andare
         var possibleDirections = getNeighborhood(pos).stream()
                 .filter(x -> pheromoneMap.containsKey(x) && pheromoneMap.get(x)>sniffThreshold)
                 .toList();
 
-        Optional<P> maxPosition = findBestPosition(possibleDirections, currentPosition, getCurrentNodeDirection(node));
+        Optional<P> maxPosition = findBestPosition(possibleDirections, pos, getCurrentNodeDirection(node));
 
         if (maxPosition.isPresent() && pheromoneMap.get(pos) > sniffThreshold) {
             updateNodeDirection(node, getDirectionFromCoordinates(pos.getX(), pos.getY(), maxPosition.get().getX(), maxPosition.get().getY()));

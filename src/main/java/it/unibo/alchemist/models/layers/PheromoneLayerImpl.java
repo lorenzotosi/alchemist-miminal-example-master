@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.Position2D;
 import it.unibo.alchemist.models.actions.MoveNode;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,10 +59,8 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     @Override
     public void deposit(final P p, final Double value){
         var mapPosition = adaptPosition(p);
-        if(pheromoneMap.containsKey(mapPosition))
+        if(pheromoneMap.containsKey(mapPosition) && pheromoneMap.get(mapPosition) <=5.0)
             pheromoneMap.put(mapPosition, (value + pheromoneMap.get(mapPosition)));
-        //else
-            //map.put(mapPosition, value);
     }
 
     @Override
@@ -76,16 +75,7 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
      * @return a copy of the map
      */
     public Map<P, Double> getPheromoneMap() {
-        return Map.copyOf(this.pheromoneMap);
-    }
-
-    /**
-     * This method is needed and used only the {@link MoveNode} because calling the getPheromoneMap method
-     * will slow down the program.
-     * @return the map
-     */
-    public Map<P, Double> getMap() {
-        return this.pheromoneMap;
+        return Collections.unmodifiableMap(this.pheromoneMap);
     }
 
     @Override

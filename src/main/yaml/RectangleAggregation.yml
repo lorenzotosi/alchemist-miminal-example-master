@@ -6,12 +6,12 @@ variables:
   wiggleAngle: &wa 45.0
   wiggleBias: &wb 0.0
   sniffAngle: &sa 45.0
-  sniffThreshold: &st 3.0
+  sniffThreshold: &st 1.5
   customDiffusionThreshold: &dt 1.0
-  xStart : &xS -5
-  yStart : &yS -5
-  width : &width 10
-  height: &height 10
+  xStart : &xS -10
+  yStart : &yS -10
+  width : &width 20
+  height: &height 20
 
 
 network-model:
@@ -26,17 +26,17 @@ environment:
         type: DiracComb
         parameters: [0, 1]
       type: Deposit
-      parameters: [*moleculeName, 1.0]
+      parameters: [*moleculeName, 2.0]
     - time-distribution:
         type: DiracComb
         parameters: [0, 1]
       type: Evaporate
-      parameters: [*moleculeName, 0.80]
+      parameters: [*moleculeName, 0.9]
     - time-distribution:
         type: DiracComb
         parameters: [0, 1]
       type: Diffuse
-      parameters: [*moleculeName, *dt, *distance, 0.5]
+      parameters: [*moleculeName, *dt, *distance, 1.0]
 
 
 
