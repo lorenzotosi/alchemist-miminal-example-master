@@ -31,12 +31,12 @@ environment:
         type: DiracComb
         parameters: [ 0, 1 ]
       type: Evaporate
-      parameters: [ *moleculeName, 0.65 ]
+      parameters: [ *moleculeName, 0.7]
     - time-distribution:
         type: DiracComb
         parameters: [ 0, 1 ]
       type: Diffuse
-      parameters: [ *moleculeName, *dt, *distance, 0.3 ]
+      parameters: [ *moleculeName, *dt, *distance, 0.3]
 
 
 
