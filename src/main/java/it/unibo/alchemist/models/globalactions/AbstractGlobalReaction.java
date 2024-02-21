@@ -9,6 +9,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * An abstract class representing a global reaction in the Alchemist simulation environment.
+ * It implements the PheromoneGlobalReaction interface.
+ * This class provides a basic implementation for common methods and fields used by global reactions.
+ *
+ * @param <T> the type of entities in the simulation environment
+ * @param <P> the type of positions in the simulation environment
+ */
 public abstract class AbstractGlobalReaction<T, P extends Position<P> & Position2D<P>>
         implements PheromoneGlobalReaction<T, P> {
     private final Environment<T, P> environment;

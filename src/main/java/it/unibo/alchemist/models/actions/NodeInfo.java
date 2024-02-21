@@ -9,10 +9,16 @@ import it.unibo.alchemist.models.nodeProperty.DirectionProperty;
 import java.util.Optional;
 
 
+/**
+ * Represents an action that provides information about a node in the environment.
+ *
+ * @param <T> the type of data associated with the node
+ * @param <P> the type of position used in the environment
+ */
 public class NodeInfo<T, P extends Position<P> & Position2D<P>> extends AbstractAction<T> {
-    private final Molecule molecule = new SimpleMolecule("pheromone"); // molecule to be used to store the counter
-    private final Node<T> node; // implicit value
-    private final Environment<T, P> environment; // implicit value
+    private final Molecule molecule = new SimpleMolecule("pheromone");
+    private final Node<T> node;
+    private final Environment<T, P> environment;
 
     public NodeInfo(Node<T> node, Environment<T, P> environment) {
         super(node);
@@ -40,6 +46,6 @@ public class NodeInfo<T, P extends Position<P> & Position2D<P>> extends Abstract
 
     @Override
     public Context getContext() {
-        return Context.NEIGHBORHOOD; // it is local because it changes only the local molecule
+        return Context.NEIGHBORHOOD;
     }
 }

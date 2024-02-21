@@ -1,5 +1,9 @@
 package it.unibo.alchemist.models.myEnums;
 
+/**
+ * An enumeration representing different directions.
+ * Each direction has associated coordinates (x, y) and neighboring directions.
+ */
 public enum Directions implements DirectionInfo {
     NORTH {
         @Override
@@ -191,6 +195,12 @@ public enum Directions implements DirectionInfo {
         }
     };
 
+    /**
+     * Returns the direction based on the given number.
+     *
+     * @param number the number representing the direction
+     * @return the direction corresponding to the number, or null if the number is invalid
+     */
     public Directions getDirection(int number) {
         return switch (number) {
             case 0 -> NORTH;

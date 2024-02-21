@@ -13,14 +13,19 @@ import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 
 
+/**
+ * Represents an action that moves a node in an environment based on certain criteria.
+ * The movement is influenced by a pheromone layer and various parameters such as sniff distance,
+ * wiggle bias, and sniff threshold.
+ *
+ * @param <P> the type of position used in the environment
+ */
 public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAction<Double> {
     private final Node<Double> node;
     private final Environment<Double, P> environment;
     private final PheromoneLayerImpl<P> pheromoneLayer;
     private final Double sniffDistance;
-    //private final Double wiggleAngle;
     private final Double wiggleBias;
-    //private final Double sniffAngle;
     private final Double sniffThreshold;
     private final Molecule molecule;
     private final Map<P, Double> pheromoneMap;
@@ -29,16 +34,13 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
 
 
     public MoveNode(final Node<Double> node, final Environment<Double, P> environment, final double distance,
-                    final Molecule molecule, /*final Double wiggleAngle,*/ final Double wiggleBias,
-                    /*final Double sniffAngle,*/ final Double sniffThreshold) {
+                    final Molecule molecule, final Double wiggleBias, final Double sniffThreshold) {
         super(node);
         this.node = node;
         this.environment = environment;
         this.sniffDistance = distance;
         this.molecule = molecule;
-        //this.wiggleAngle = wiggleAngle;
         this.wiggleBias = wiggleBias;
-        //this.sniffAngle = sniffAngle;
         this.sniffThreshold = sniffThreshold;
         this.pheromoneLayer = (PheromoneLayerImpl<P>) environment.getLayer(molecule).get();
         this.pheromoneMap = pheromoneLayer.getPheromoneMap();
@@ -47,8 +49,7 @@ public class MoveNode<P extends Position<P> & Position2D<P>> extends AbstractAct
 
     @Override
     public Action<Double> cloneAction(final Node<Double> node, final Reaction<Double> reaction) {
-        return new MoveNode<>(node, environment, sniffDistance, molecule,
-                /*wiggleAngle,*/ wiggleBias, /*sniffAngle,*/ sniffThreshold);
+        return new MoveNode<>(node, environment, sniffDistance, molecule, wiggleBias, sniffThreshold);
     }
 
     @Override

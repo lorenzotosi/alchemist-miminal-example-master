@@ -29,5 +29,10 @@ public interface PheromoneLayer<P extends Position2D<P>> extends Layer<Double, P
      */
     void evaporate(P p, Double value);
 
+    /**
+     * Returns the bounds of the layer as a Rectangle object.
+     *
+     * @return the bounds of the layer as a Rectangle object
+     */
     Rectangle getLayerBounds();
 }

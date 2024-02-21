@@ -49,13 +49,6 @@ public class Diffuse<T, P extends Position<P> & Position2D<P>> extends AbstractG
     public void action(final PheromoneLayerImpl<P> phLayer) {
         var pheromoneMap = phLayer.getPheromoneMap();
 
-        /*var nodeList = getEnvironment().getNodes().stream().map(a -> getEnvironment().getPosition(a)).toList();
-        nodeList.forEach(p -> {
-            var nPos = phLayer.adaptPosition(p);
-            var pValue = pheromoneMap.getOrDefault(nPos, 0.0);
-            if (pValue > customDiffusionThreshold)
-                getNeighborhood(nPos).forEach(x -> phLayer.deposit(x, pValue * diffusionValue));
-        });*/
         pheromoneMap.forEach((k, v) -> {
             if (v > customDiffusionThreshold){
                 getNeighborhood(k).forEach(x -> phLayer.deposit(k, v * diffusionValue));
