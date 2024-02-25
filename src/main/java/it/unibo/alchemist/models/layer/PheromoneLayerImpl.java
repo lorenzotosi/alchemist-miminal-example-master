@@ -69,15 +69,6 @@ public class PheromoneLayerImpl<P extends Position2D<P>> implements PheromoneLay
     }
 
     /**
-     * Returns the pheromone map.
-     *
-     * @return a copy of the map
-     */
-    /*public Map<P, Double> getPheromoneMap() {
-        return Map.copyOf(this.pheromoneMap);
-    }*/
-
-    /**
      * This method returns the pheromone map wrapped into an unmodifiable map.
      * @return the map
      */
